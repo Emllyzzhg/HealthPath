@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="25249" systemVersion="25G83" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="Appointment" representedClassName=".Appointment" syncable="YES" codeGenerationType="class">
+    <entity name="Appointment" representedClassName=".AppointmentEntity" syncable="YES" codeGenerationType="class">
         <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="descriptionText" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="isComplete" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isCompleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="location" optional="YES" attributeType="String"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <relationship name="healthRequirement" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="HealthRequirement" inverseName="appointment" inverseEntity="HealthRequirement"/>
     </entity>
-    <entity name="Document" representedClassName=".Document" syncable="YES" codeGenerationType="class">
+    <entity name="Document" representedClassName=".DocumentEntity" syncable="YES" codeGenerationType="class">
         <attribute name="dateAdded" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="documentType" optional="YES" attributeType="String"/>
         <attribute name="filePath" optional="YES" attributeType="String"/>
@@ -17,12 +17,12 @@
         <attribute name="name" optional="YES" attributeType="String"/>
         <relationship name="healthRequirement" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="HealthRequirement" inverseName="document" inverseEntity="HealthRequirement"/>
     </entity>
-    <entity name="HealthCase" representedClassName=".HealthCase" syncable="YES" codeGenerationType="class">
+    <entity name="HealthCase" representedClassName=".HealthCaseEntity" syncable="YES" codeGenerationType="class">
         <attribute name="createdDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <relationship name="requirements" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="HealthRequirement" inverseName="healthCase" inverseEntity="HealthRequirement"/>
     </entity>
-    <entity name="HealthRequirement" representedClassName=".HealthRequirement" syncable="YES" codeGenerationType="class">
+    <entity name="HealthRequirement" representedClassName=".HealthRequirementEntity" syncable="YES" codeGenerationType="class">
         <attribute name="descriptionText" optional="YES" attributeType="String"/>
         <attribute name="dueDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
