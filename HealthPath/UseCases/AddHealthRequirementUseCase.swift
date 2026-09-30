@@ -52,7 +52,7 @@ struct AddHealthRequirementUseCase {
             throw AddHealthRequirementError.healthCaseNotFound
         }
 
-        // All rules passed, so save the requirement with the cleaned-up title.
+        // All rules passed, so save the requirement with the spaces removed from its title.
         var cleanedRequirement = requirement
         cleanedRequirement.title = trimmedTitle
         try requirementRepository.add(cleanedRequirement)
