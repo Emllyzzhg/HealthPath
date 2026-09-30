@@ -32,7 +32,7 @@ final class CoreDataAppointmentRepository: AppointmentRepository {
             let appointment = Appointment(
                 id: id,
                 title: entity.title ?? "",
-                date: entity.date ?? Date(),
+                date: date,
                 location: entity.location ?? "",
                 descriptionText: entity.descriptionText ?? "",
                 isCompleted: entity.isCompleted,
@@ -64,7 +64,7 @@ final class CoreDataAppointmentRepository: AppointmentRepository {
             let appointment = Appointment(
                 id: id,
                 title: entity.title ?? "",
-                date: entity.date ?? Date(),
+                date: date,
                 location: entity.location ?? "",
                 descriptionText: entity.descriptionText ?? "",
                 isCompleted: entity.isCompleted,

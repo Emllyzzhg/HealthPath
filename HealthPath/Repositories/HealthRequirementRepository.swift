@@ -22,4 +22,6 @@ protocol HealthRequirementRepository {
 enum HealthRequirementRepositoryError: Error {
     /// The requirement is no longer stored, so it can't be changed.
     case requirementNotFound
+    /// The health case could not be found, so the requirement can't be added to it.
+    case healthCaseNotFound
 }

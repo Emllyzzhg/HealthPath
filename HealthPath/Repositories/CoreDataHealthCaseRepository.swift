@@ -6,7 +6,9 @@
 //
 
 import CoreData
-/// Stores and manages the user's health case using Core Data.
+/// Keeps the applicant's health case in the app's Core Data store.
+/// This is the only place that talks to the database about the health case.
+/// Use cases work through HealthCaseRepository, so the business rules never depend on Core Data.
 final class CoreDataHealthCaseRepository: HealthCaseRepository {
  
     private let context: NSManagedObjectContext
@@ -14,25 +16,33 @@ final class CoreDataHealthCaseRepository: HealthCaseRepository {
         self.context = context
     }
  
+    /// Returns the applicant's health case, or nil if they haven't started one yet.
+    /// If the stored case is missing its id or start date, it is treated as not found.
     func fetch() throws -> HealthCase? {
         let request = HealthCaseEntity.fetchRequest()
-        guard let entity = try context.fetch(request).first else {
+        request.sortDescriptors = [NSSortDescriptor(key: "createdDate", ascending: true)]
+        request.fetchLimit = 1
+        
+        guard let entity = try context.fetch(request).first,
+              let id = entity.id,
+              let createdDate = entity.createdDate else {
             return nil
         }
         return HealthCase(
-            id: entity.id ?? UUID(),
-            createdDate: entity.createdDate ?? Date()
+            id: id,
+            createdDate: createdDate
         )
     }
  
+    /// Saves a new health case, for example when the applicant taps "Get Started".
+    /// Throws HealthCaseRepositoryError/healthCaseAlreadyExists if the applicant already has a health case.
     func save(_ healthCase: HealthCase) throws {
         let request = HealthCaseEntity.fetchRequest()
-        let entity: HealthCaseEntity
-        if let existingEntity = try context.fetch(request).first {
-            entity = existingEntity
-        } else {
-            entity = HealthCaseEntity(context: context)
+        request.fetchLimit = 1
+        if try context.fetch(request).first != nil {
+            throw HealthCaseRepositoryError.healthCaseAlreadyExists
         }
+        let entity = HealthCaseEntity(context: context)
         entity.id = healthCase.id
         entity.createdDate = healthCase.createdDate
         try context.save()

@@ -61,20 +61,24 @@ final class CoreDataHealthRequirementRepository: HealthRequirementRepository {
     }
     
     /// Saves a newly recorded requirement and links it to the applicant's health case.
+    /// Throws: HealthRequirementRepositoryError/healthCaseNotFound if the case is not found.
     func add(_ requirement: HealthRequirement) throws {
+        let request = HealthCaseEntity.fetchRequest()
+        request.predicate = NSPredicate(
+            format: "id == %@",
+            requirement.healthCaseID as CVarArg
+        )
+        guard let caseEntity = try context.fetch(request).first else {
+            throw HealthRequirementRepositoryError.healthCaseNotFound
+        }
+        
         let entity = HealthRequirementEntity(context: context)
         entity.id = requirement.id
         entity.title = requirement.title
         entity.descriptionText = requirement.descriptionText
         entity.dueDate = requirement.dueDate
         entity.status = requirement.status.rawValue
-
-        let request = HealthCaseEntity.fetchRequest()
-        request.predicate = NSPredicate(
-            format: "id == %@",
-            requirement.healthCaseID as CVarArg
-        )
-        entity.healthCase = try context.fetch(request).first
+        entity.healthCase = caseEntity
 
         try context.save()
     }
@@ -87,7 +91,6 @@ final class CoreDataHealthRequirementRepository: HealthRequirementRepository {
             format: "id == %@",
             requirement.id as CVarArg
         )
-        
         guard let entity = try context.fetch(request).first else {
             throw HealthRequirementRepositoryError.requirementNotFound
         }
