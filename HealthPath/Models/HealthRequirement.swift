@@ -28,6 +28,7 @@ struct HealthRequirement: Identifiable, Equatable, Hashable {
     var dueDate: Date
     var status: HealthRequirementStatus
     let healthCaseID: UUID
+    var completedDate: Date? = nil
     func isOverdue(at now: Date = Date()) -> Bool {
         let calendar = Calendar.current
         return status != .completed

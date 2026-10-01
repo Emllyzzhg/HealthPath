@@ -14,7 +14,7 @@ import Foundation
 /// Business rules
 /// 1. The requirement must exist.
 /// 2. A completed requirement cannot be completed again.
-/// 3. The status must be updated and saved.
+/// 3. The status must be updated and saved. The date it was completed is recorded, so Home can show recent activity.
 ///
 /// This use case never talks to the database directly.
 /// The requirement shows "Completed" in green on the Requirements list and its details screen. Completing a requirement doesn't touch its appointments or documents, and it doesn't record a completion date.
@@ -32,7 +32,7 @@ struct CompleteHealthRequirementUseCase {
     /// Marks the requirement as completed.
     /// The requirement to complete, for example "Chest X-ray".
     /// - Throws: CompleteHealthRequirementError/requirementNotFound if the requirement does not exist, or CompleteHealthRequirementError/alreadyCompleted if it is already completed.
-    func execute(id: UUID) throws {
+    func execute(id: UUID, now: Date = Date()) throws {
         // Rule 1: the requirement must exist.
         guard var requirement = try repository.fetchRequirement(withID: id) else {
             throw CompleteHealthRequirementError.requirementNotFound
@@ -43,8 +43,9 @@ struct CompleteHealthRequirementUseCase {
             throw CompleteHealthRequirementError.alreadyCompleted
         }
 
-        // Rule 3: update the status and save it.
+        // Rule 3: update the status, record when it was completed, and save it.
         requirement.status = .completed
+        requirement.completedDate = now
         try repository.update(requirement)
     }
 }

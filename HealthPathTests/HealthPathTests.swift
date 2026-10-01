@@ -198,6 +198,27 @@ struct HealthPathTests {
         #expect(requirementRepository.requirements[0].title == "Chest X-ray")
         }
     
+    /// Completing a requirement records the date it was completed.
+    @Test func completeRequirement_thatNeedsAction_recordsTheCompletedDate() throws {
+        let repository = MockHealthRequirementRepository()
+        // Create a requirement associated with a health case.
+        let requirement = HealthRequirement(
+            id: UUID(),
+            title: "Chest X-ray",
+            descriptionText: "",
+            dueDate: Date(),
+            status: .actionRequired,
+            healthCaseID: UUID()
+        )
+        // Add the requirement to the repository.
+        repository.requirements = [requirement]
+        // Create the use case with the repository.
+        let useCase = CompleteHealthRequirementUseCase(repository: repository)
+        // Execute and expect the completion date to be recorded.
+        try useCase.execute(id: requirement.id)
+        #expect(repository.requirements[0].completedDate != nil)
+    }
+    
     /// An applicant records a chest X-ray appointment for tomorrow, and it is saved.
     @Test func scheduleAppointment_withTitleFutureDateAndExistingRequirement_savesIt() throws {
         let appointmentRepository = MockAppointmentRepository()
@@ -233,6 +254,7 @@ struct HealthPathTests {
         try useCase.execute(appointment)
         #expect(appointmentRepository.appointments.count == 1)
         }
+    
     /// An applicant leaves the appointment title empty, so they are asked to enter one.
     @Test func scheduleAppointment_withEmptyTitle_throwsEmptyTitle() {
         let appointmentRepository = MockAppointmentRepository()

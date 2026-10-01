@@ -33,7 +33,8 @@ final class CoreDataHealthRequirementRepository: HealthRequirementRepository {
                 descriptionText: entity.descriptionText ?? "",
                 dueDate: dueDate,
                 status: HealthRequirementStatus(rawValue: entity.status ?? "") ?? .actionRequired,
-                healthCaseID: healthCaseID
+                healthCaseID: healthCaseID,
+                completedDate: entity.completedDate
             )
         }
     }
@@ -56,7 +57,8 @@ final class CoreDataHealthRequirementRepository: HealthRequirementRepository {
             descriptionText: entity.descriptionText ?? "",
             dueDate: dueDate,
             status: HealthRequirementStatus(rawValue: entity.status ?? "") ?? .actionRequired,
-            healthCaseID: healthCaseID
+            healthCaseID: healthCaseID,
+            completedDate: entity.completedDate
         )
     }
     
@@ -79,6 +81,7 @@ final class CoreDataHealthRequirementRepository: HealthRequirementRepository {
         entity.dueDate = requirement.dueDate
         entity.status = requirement.status.rawValue
         entity.healthCase = caseEntity
+        entity.completedDate = requirement.completedDate
 
         try context.save()
     }
@@ -99,6 +102,7 @@ final class CoreDataHealthRequirementRepository: HealthRequirementRepository {
         entity.descriptionText = requirement.descriptionText
         entity.dueDate = requirement.dueDate
         entity.status = requirement.status.rawValue
+        entity.completedDate = requirement.completedDate
         try context.save()
     }
  

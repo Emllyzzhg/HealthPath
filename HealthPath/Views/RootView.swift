@@ -36,10 +36,13 @@ struct RootView: View {
     /// The four main tabs, shown once the applicant has started their health case.
     private func mainTabs(healthCaseID: UUID) -> some View {
         TabView {
-            Text("Home")
-                .tabItem {
-                    Label("Home", systemImage: "house")
-                }
+            HomeView(
+                viewModel: dependencies.makeHomeViewModel(),
+                dependencies: dependencies
+            )
+            .tabItem {
+                Label("Home", systemImage: "house")
+            }
 
             RequirementsView(
                 viewModel: dependencies.makeRequirementViewModel(healthCaseID: healthCaseID),

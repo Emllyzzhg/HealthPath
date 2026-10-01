@@ -67,4 +67,13 @@ struct AppDependencies {
             completeUseCase: completeRequirementUseCase
         )
     }
+    
+    /// Creates the view model for the Home screen.
+    @MainActor
+    func makeHomeViewModel() -> HomeViewModel {
+        return HomeViewModel(
+            requirementRepository: requirementRepository,
+            appointmentRepository: appointmentRepository
+        )
+    }
 }
