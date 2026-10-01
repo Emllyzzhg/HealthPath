@@ -11,10 +11,12 @@ import SwiftUI
 struct RequirementsView: View {
 
     @StateObject private var viewModel: HealthRequirementViewModel
+    private let dependencies: AppDependencies
     @State private var showingAddRequirement = false
 
-    init(viewModel: HealthRequirementViewModel) {
+    init(viewModel: HealthRequirementViewModel, dependencies: AppDependencies) {
         _viewModel = StateObject(wrappedValue: viewModel)
+        self.dependencies = dependencies
     }
 
     var body: some View {
@@ -44,8 +46,10 @@ struct RequirementsView: View {
                     List {
                         ForEach(viewModel.filteredRequirements) { requirement in
                             NavigationLink {
-                                // Requirement Details goes here once it is built.
-                                Text(requirement.title)
+                                RequirementDetailView(
+                                    viewModel: dependencies.makeRequirementDetailViewModel(requirement: requirement),
+                                    appointmentViewModel: dependencies.makeAppointmentViewModel()
+                                )
                             } label: {
                                 VStack(alignment: .leading, spacing: 6) {
                                     Text(requirement.title)

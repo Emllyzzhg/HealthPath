@@ -56,4 +56,15 @@ struct AppDependencies {
             scheduleUseCase: scheduleAppointmentUseCase
         )
     }
+
+    /// Creates the view model for the Requirement Details screen.
+    @MainActor
+    func makeRequirementDetailViewModel(requirement: HealthRequirement) -> RequirementDetailViewModel {
+        return RequirementDetailViewModel(
+            requirement: requirement,
+            requirementRepository: requirementRepository,
+            appointmentRepository: appointmentRepository,
+            completeUseCase: completeRequirementUseCase
+        )
+    }
 }

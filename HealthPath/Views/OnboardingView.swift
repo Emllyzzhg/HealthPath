@@ -21,7 +21,7 @@ struct OnboardingView: View {
                 .foregroundStyle(.tint)
                 .accessibilityHidden(true)
 
-            Text("Welcome")
+            Text("Welcome to HealthPath")
                 .font(.largeTitle)
                 .bold()
 

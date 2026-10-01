@@ -44,11 +44,14 @@ struct AddRequirementView: View {
                 }
                 .pickerStyle(.inline)
                 .labelsHidden()
-                
-                if selectedTitle == "Other" {
-                    TextField("Describe it, for example Vaccination", text: $otherTitle)
+            }
+            if selectedTitle == "Other" {
+                Section("Describe it") {
+                    TextField("For example Vaccination", text: $otherTitle)
                 }
-                
+            }
+            
+            Section("Details") {
                 TextField(
                     "Details from your documents (optional)",
                     text: $descriptionText,

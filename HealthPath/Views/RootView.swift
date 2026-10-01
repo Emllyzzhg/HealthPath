@@ -42,7 +42,8 @@ struct RootView: View {
                 }
 
             RequirementsView(
-                viewModel: dependencies.makeRequirementViewModel(healthCaseID: healthCaseID)
+                viewModel: dependencies.makeRequirementViewModel(healthCaseID: healthCaseID),
+                dependencies: dependencies
             )
             .tabItem {
                 Label("Requirements", systemImage: "checklist")
