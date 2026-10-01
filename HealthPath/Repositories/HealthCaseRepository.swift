@@ -15,7 +15,14 @@ protocol HealthCaseRepository {
 }
 
 /// Problems the health case store can report.
-enum HealthCaseRepositoryError: Error {
+enum HealthCaseRepositoryError: LocalizedError {
     /// The applicant already has a health case, so a second one can't be started.
     case healthCaseAlreadyExists
+    
+    var errorDescription: String? {
+        switch self {
+        case .healthCaseAlreadyExists:
+            return "You've already started your health case. Go to Home to continue."
+        }
+    }
 }

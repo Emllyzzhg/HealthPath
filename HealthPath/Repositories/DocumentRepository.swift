@@ -18,9 +18,18 @@ protocol DocumentRepository {
 }
 
 /// Problems the document store can report.
-enum DocumentRepositoryError: Error {
+enum DocumentRepositoryError: LocalizedError {
     /// The document is no longer stored, so it can't be changed.
     case documentNotFound
     /// The health requirement could not be found, so the document can't be added to it.
     case requirementNotFound
+
+    var errorDescription: String? {
+        switch self {
+        case .documentNotFound:
+            return "We couldn't find this document. It may have been deleted. Go back to your documents and try again."
+        case .requirementNotFound:
+            return "We couldn't find the health requirement for this document. Go back to your requirements, choose one, and try again."
+        }
+    }
 }

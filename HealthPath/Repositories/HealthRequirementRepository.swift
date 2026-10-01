@@ -19,9 +19,18 @@ protocol HealthRequirementRepository {
 }
 
 /// Problems the requirement store can report.
-enum HealthRequirementRepositoryError: Error {
+enum HealthRequirementRepositoryError: LocalizedError {
     /// The requirement is no longer stored, so it can't be changed.
     case requirementNotFound
     /// The health case could not be found, so the requirement can't be added to it.
     case healthCaseNotFound
+    
+    var errorDescription: String? {
+        switch self {
+        case .requirementNotFound:
+            return "We couldn't find this health requirement. Go back to your requirements and try again."
+        case .healthCaseNotFound:
+            return "We couldn't find your health case. Go back to the start screen, tap Get Started, then add the requirement again."
+        }
+    }
 }
