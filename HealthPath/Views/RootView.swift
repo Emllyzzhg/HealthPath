@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct RootView: View {
 
@@ -21,8 +22,8 @@ struct RootView: View {
 
     var body: some View {
         Group {
-            if startViewModel.healthCase != nil {
-                mainTabs
+            if let healthCase = startViewModel.healthCase {
+                mainTabs(healthCaseID: healthCase.id)
             } else {
                 OnboardingView(viewModel: startViewModel)
             }
@@ -33,17 +34,19 @@ struct RootView: View {
     }
 
     /// The four main tabs, shown once the applicant has started their health case.
-    private var mainTabs: some View {
+    private func mainTabs(healthCaseID: UUID) -> some View {
         TabView {
             Text("Home")
                 .tabItem {
                     Label("Home", systemImage: "house")
                 }
 
-            Text("Requirements")
-                .tabItem {
-                    Label("Requirements", systemImage: "checklist")
-                }
+            RequirementsView(
+                viewModel: dependencies.makeRequirementViewModel(healthCaseID: healthCaseID)
+            )
+            .tabItem {
+                Label("Requirements", systemImage: "checklist")
+            }
 
             Text("Appointments")
                 .tabItem {

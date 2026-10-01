@@ -11,11 +11,17 @@ import CoreData
 @main
 struct HealthPathApp: App {
     let persistenceController = PersistenceController.shared
+    let dependencies: AppDependencies
+
+    init() {
+        dependencies = AppDependencies(
+            context: PersistenceController.shared.container.viewContext
+        )
+    }
 
     var body: some Scene {
         WindowGroup {
-            RootView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            RootView(dependencies: dependencies)
         }
     }
 }
