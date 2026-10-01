@@ -44,7 +44,7 @@ final class CoreDataAppointmentRepository: AppointmentRepository {
     }
     
     /// Returns the appointments recorded for one health requirement, earliest first.
-    /// Parameter requirementID: The requirement, such as "Chest X-ray".
+    /// - Parameter requirementID: The requirement, such as "Chest X-ray".
     func fetchAppointments(for requirementID: UUID) throws -> [Appointment] {
         let request = AppointmentEntity.fetchRequest()
         request.predicate = NSPredicate(

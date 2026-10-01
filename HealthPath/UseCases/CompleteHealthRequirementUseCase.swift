@@ -31,7 +31,7 @@ struct CompleteHealthRequirementUseCase {
 
     /// Marks the requirement as completed.
     /// The requirement to complete, for example "Chest X-ray".
-    /// Throws CompleteHealthRequirementError/requirementNotFound if the requirement does not exist, or CompleteHealthRequirementError/alreadyCompleted if it is already completed.
+    /// - Throws: CompleteHealthRequirementError/requirementNotFound if the requirement does not exist, or CompleteHealthRequirementError/alreadyCompleted if it is already completed.
     func execute(id: UUID) throws {
         // Rule 1: the requirement must exist.
         guard var requirement = try repository.fetchRequirement(withID: id) else {

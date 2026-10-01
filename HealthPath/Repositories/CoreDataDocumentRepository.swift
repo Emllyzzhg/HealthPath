@@ -45,7 +45,7 @@ final class CoreDataDocumentRepository: DocumentRepository {
     }
  
     /// Returns the documents kept with one health requirement, newest first.
-    /// The requirement, such as "Chest X-ray".
+    /// - Parameter requirementID: The requirement, such as "Chest X-ray".
     func fetchDocuments(for requirementID: UUID) throws -> [Document] {
         let request = DocumentEntity.fetchRequest()
         request.predicate = NSPredicate(
@@ -75,7 +75,7 @@ final class CoreDataDocumentRepository: DocumentRepository {
     }
     
     /// Saves a newly added document and links it to its health requirement.
-    /// Throws DocumentRepositoryError/requirementNotFound if the health requirement does not exist.
+    /// - Throws: DocumentRepositoryError/requirementNotFound if the health requirement does not exist.
     func add(_ document: Document) throws {
         let request = HealthRequirementEntity.fetchRequest()
         request.predicate = NSPredicate(
@@ -99,7 +99,7 @@ final class CoreDataDocumentRepository: DocumentRepository {
  
     /// Saves changes to an existing document, for example a new name.
     /// A document stays with the requirement it was added to, and its date added does not change.
-    /// Throws DocumentRepositoryError/documentNotFound if the document is no longer stored.
+    /// - Throws: DocumentRepositoryError/documentNotFound if the document is no longer stored.
     func update(_ document: Document) throws {
         let request = DocumentEntity.fetchRequest()
         request.predicate = NSPredicate(

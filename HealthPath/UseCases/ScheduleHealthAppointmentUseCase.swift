@@ -29,7 +29,7 @@ struct ScheduleHealthAppointmentUseCase {
     }
 
     /// Records the appointment for its health requirement.
-    /// Throws ScheduleHealthAppointmentError/emptyTitle if the title is empty, ScheduleHealthAppointmentError/appointmentInPast if the date has already passed, or ScheduleHealthAppointmentError/requirementNotFound if the requirement does not exist.
+    /// - Throws: ScheduleHealthAppointmentError/emptyTitle if the title is empty, ScheduleHealthAppointmentError/appointmentInPast if the date has already passed, or ScheduleHealthAppointmentError/requirementNotFound if the requirement does not exist.
     func execute(_ appointment: Appointment, now: Date = Date()) throws {
         // Rule 1: a title is required.
         let trimmedTitle = appointment.title.trimmingCharacters(in: .whitespacesAndNewlines)

@@ -30,7 +30,7 @@ struct AddHealthRequirementUseCase {
     }
 
     /// Adds the requirement to the applicant's health case.
-    /// Throws AddHealthRequirementError/emptyTitle if the title is empty, AddHealthRequirementError/invalidDueDate if the due date is more than five years away, orAddHealthRequirementError/healthCaseNotFound if the applicant has no matching health case.
+    /// - Throws: AddHealthRequirementError/emptyTitle if the title is empty, AddHealthRequirementError/invalidDueDate if the due date is more than five years away, orAddHealthRequirementError/healthCaseNotFound if the applicant has no matching health case.
     func execute(_ requirement: HealthRequirement, now: Date = Date()) throws {
         // Rule 1: a title is required.
         let trimmedTitle = requirement.title.trimmingCharacters(in: .whitespacesAndNewlines)

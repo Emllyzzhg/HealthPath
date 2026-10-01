@@ -35,7 +35,7 @@ final class CoreDataHealthCaseRepository: HealthCaseRepository {
     }
  
     /// Saves a new health case, for example when the applicant taps "Get Started".
-    /// Throws HealthCaseRepositoryError/healthCaseAlreadyExists if the applicant already has a health case.
+    /// - Throws: HealthCaseRepositoryError/healthCaseAlreadyExists if the applicant already has a health case.
     func save(_ healthCase: HealthCase) throws {
         let request = HealthCaseEntity.fetchRequest()
         request.fetchLimit = 1

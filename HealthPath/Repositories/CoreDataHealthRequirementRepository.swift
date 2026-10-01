@@ -39,7 +39,7 @@ final class CoreDataHealthRequirementRepository: HealthRequirementRepository {
     }
     
     /// Returns the requirement with this ID, or nil if it can't be found.
-    /// Parameter id: The requirement to look up.
+    /// - Parameter id: The requirement to look up.
     func fetchRequirement(withID id: UUID) throws -> HealthRequirement? {
         let request = HealthRequirementEntity.fetchRequest()
         request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
@@ -61,7 +61,7 @@ final class CoreDataHealthRequirementRepository: HealthRequirementRepository {
     }
     
     /// Saves a newly recorded requirement and links it to the applicant's health case.
-    /// Throws: HealthRequirementRepositoryError/healthCaseNotFound if the case is not found.
+    /// - Throws: HealthRequirementRepositoryError/healthCaseNotFound if the case is not found.
     func add(_ requirement: HealthRequirement) throws {
         let request = HealthCaseEntity.fetchRequest()
         request.predicate = NSPredicate(
@@ -84,7 +84,7 @@ final class CoreDataHealthRequirementRepository: HealthRequirementRepository {
     }
  
     /// Saves changes to an existing requirement, for example marking it as completed.
-    /// Throws HealthRequirementRepositoryError/requirementNotFound if the requirement is no longer stored.
+    /// - Throws: HealthRequirementRepositoryError/requirementNotFound if the requirement is no longer stored.
     func update(_ requirement: HealthRequirement) throws {
         let request = HealthRequirementEntity.fetchRequest()
         request.predicate = NSPredicate(
