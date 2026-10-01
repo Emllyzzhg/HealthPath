@@ -88,4 +88,24 @@ final class AppointmentViewModel: ObservableObject {
             errorMessage = "We couldn't remove this appointment. Close the app and open it again, then try once more."
         }
     }
+    
+    /// Marks an appointment as attended.
+    func markAsAttended(_ appointment: Appointment) {
+        errorMessage = nil
+
+        var attendedAppointment = appointment
+        attendedAppointment.isCompleted = true
+
+        do {
+            try repository.update(attendedAppointment)
+            loadAppointments()
+            // Once the widget exists, reload it here: WidgetCenter.shared.reloadAllTimelines()
+        } catch {
+            if let repositoryError = error as? AppointmentRepositoryError {
+                errorMessage = repositoryError.errorDescription
+            } else {
+                errorMessage = "We couldn't mark this appointment as attended. Close the app and open it again, then try once more."
+            }
+        }
+    }
 }

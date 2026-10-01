@@ -49,7 +49,7 @@ struct RootView: View {
                 Label("Requirements", systemImage: "checklist")
             }
 
-            Text("Appointments")
+            AppointmentsView(viewModel: dependencies.makeAppointmentViewModel())
                 .tabItem {
                     Label("Appointments", systemImage: "calendar")
                 }

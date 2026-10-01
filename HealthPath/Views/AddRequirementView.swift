@@ -59,12 +59,16 @@ struct AddRequirementView: View {
                 )
             }
             
-            Section("Due Date") {
+            Section {
                 DatePicker(
                     "Due Date",
                     selection: $dueDate,
                     displayedComponents: .date
                 )
+            } header: {
+                Text("Due Date")
+            } footer: {
+                Text("The due date noted on your Health Undertaking (Form 815) or on your clinic's letter.")
             }
             
             if let errorMessage = viewModel.errorMessage {

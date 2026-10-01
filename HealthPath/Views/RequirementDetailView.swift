@@ -35,20 +35,24 @@ struct RequirementDetailView: View {
                 }
             }
 
-            Section("Due Date") {
+            Section {
                 HStack {
                     Image(systemName: "calendar")
                         .accessibilityHidden(true)
 
                     Text(viewModel.requirement.dueDate, style: .date)
                 }
+            } header: {
+                Text("Due Date")
+            } footer: {
+                Text("The due date noted on your Health Undertaking (Form 815) or on your clinic's letter.")
             }
 
             Section("Status") {
                 RequirementStatusBadge(requirement: viewModel.requirement)
             }
 
-            Section("Appointments") {
+            Section {
                 if viewModel.appointments.isEmpty {
                     Text("No appointments yet. Add the date of your appointment for this requirement.")
                         .foregroundStyle(.secondary)
@@ -77,6 +81,10 @@ struct RequirementDetailView: View {
                 } label: {
                     Label("Add Appointment", systemImage: "plus.circle.fill")
                 }
+            } header: {
+                Text("Appointments")
+            } footer: {
+                Text("The dates and times you have booked, such as a blood test, medicine pickup or VDOT call time.")
             }
 
             if let message = viewModel.errorMessage {
