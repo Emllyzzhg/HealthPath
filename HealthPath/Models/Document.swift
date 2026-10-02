@@ -18,7 +18,7 @@ import Foundation
 ///
 /// These rules are checked when the applicant adds a document. See AddDocumentUseCase.
 
-struct Document: Identifiable, Equatable, Hashable  {
+struct Document: Identifiable, Equatable, Hashable, Codable  {
     let id: UUID
     var name: String
     var filePath: String

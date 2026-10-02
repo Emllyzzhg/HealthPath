@@ -11,7 +11,7 @@ import Foundation
 /// It is the applicant's own record. It is not a decision from Home Affairs, and it does not say whether a requirement has been accepted.
 /// "Overdue" is not stored as a status. It is worked out from the due date, so it is always correct for today.
 
-enum HealthRequirementStatus: String {
+enum HealthRequirementStatus: String, Codable, Equatable, Hashable {
     case upcoming
     case actionRequired
     case completed

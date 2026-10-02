@@ -21,7 +21,7 @@ import Foundation
 ///
 /// These rules are checked when the applicant adds or completes a requirement. See AddHealthRequirementUseCase and CompleteHealthRequirementUseCase.
 /// 
-struct HealthRequirement: Identifiable, Equatable, Hashable {
+struct HealthRequirement: Identifiable, Equatable, Hashable, Codable {
     let id: UUID
     var title: String
     var descriptionText: String

@@ -1,0 +1,35 @@
+[
+  {
+      "id": "B1000000-0000-0000-0000-000000000001",
+      "title": "Chest X-ray",
+      "descriptionText": "",
+      "dueDate": "2026-10-10T00:00:00Z",
+      "status": "actionRequired",
+      "healthCaseID": "C1000000-0000-0000-0000-000000000001"
+  },
+  {
+      "id": "B1000000-0000-0000-0000-000000000002",
+      "title": "Blood test",
+      "descriptionText": "",
+      "dueDate": "2026-10-20T00:00:00Z",
+      "status": "upcoming",
+    "healthCaseID": "C1000000-0000-0000-0000-000000000001"
+  },
+  {
+      "id": "B1000000-0000-0000-0000-000000000003",
+      "title": "Specialist appointment",
+      "descriptionText": "Respiratory clinic",
+      "dueDate": "2026-09-25T00:00:00Z",
+      "status": "completed",
+      "healthCaseID": "C1000000-0000-0000-0000-000000000001",
+      "completedDate": "2026-09-24T00:00:00Z"
+  },
+  {
+      "id": "B1000000-0000-0000-0000-000000000004",
+      "title": "Sputum test",
+      "descriptionText": "",
+      "dueDate": "2026-09-30T00:00:00Z",
+      "status": "actionRequired",
+      "healthCaseID": "C1000000-0000-0000-0000-000000000001"
+  }
+]

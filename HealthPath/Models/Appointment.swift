@@ -16,7 +16,7 @@ import Foundation
 ///
 /// These rules are checked when the applicant schedules an appointment. See ScheduleHealthAppointmentUseCase
 
-struct Appointment: Identifiable, Equatable, Hashable {
+struct Appointment: Identifiable, Equatable, Hashable, Codable {
     let id: UUID
     var title: String
     var date: Date

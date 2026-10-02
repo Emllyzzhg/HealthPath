@@ -7,7 +7,7 @@
 
 import Foundation
 /// Keeps the applicant's own record of their health documents.
-/// Use cases talk to this protocol instead of the database, so the storage (Core Data in the app, a mock in unit tests) can change without affecting the business rules.
+/// Use cases talk to this protocol instead of the database, so the storage (Swift Data in the app, a mock in unit tests) can change without affecting the business rules.
 /// HealthPath stores the applicant's copy of each document. It does not send documents to Home Affairs or eMedical.
 protocol DocumentRepository {
     func fetchAll() throws -> [Document]

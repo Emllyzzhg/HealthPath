@@ -19,7 +19,7 @@ import Foundation
 ///
 /// This rule is checked when the applicant adds a requirement. See AddHealthRequirementUseCase.
 
-struct HealthCase: Identifiable {
+struct HealthCase: Identifiable, Codable {
     let id: UUID
-    let createdDate:Date
+    let createdDate: Date
 }
