@@ -11,12 +11,17 @@ import SwiftUI
 struct RequirementsView: View {
 
     @StateObject private var viewModel: HealthRequirementViewModel
-    private let dependencies: AppDependencies
+    private let requirementRepository: any HealthRequirementRepository
+    private let appointmentRepository: any AppointmentRepository
     @State private var showingAddRequirement = false
 
-    init(viewModel: HealthRequirementViewModel, dependencies: AppDependencies) {
+    init(viewModel: HealthRequirementViewModel,
+         requirementRepository: any HealthRequirementRepository,
+         appointmentRepository: any AppointmentRepository
+    ) {
         _viewModel = StateObject(wrappedValue: viewModel)
-        self.dependencies = dependencies
+        self.requirementRepository = requirementRepository
+        self.appointmentRepository = appointmentRepository
     }
 
     var body: some View {
@@ -47,8 +52,21 @@ struct RequirementsView: View {
                         ForEach(viewModel.filteredRequirements) { requirement in
                             NavigationLink {
                                 RequirementDetailView(
-                                    viewModel: dependencies.makeRequirementDetailViewModel(requirement: requirement),
-                                    appointmentViewModel: dependencies.makeAppointmentViewModel()
+                                    viewModel: RequirementDetailViewModel(
+                                        requirement: requirement,
+                                        requirementRepository: requirementRepository,
+                                        appointmentRepository: appointmentRepository,
+                                        completeUseCase: CompleteHealthRequirementUseCase(
+                                        repository: requirementRepository
+                                        )
+                                    ),
+                                    appointmentViewModel: AppointmentViewModel(
+                                        repository: appointmentRepository,
+                                        scheduleUseCase: ScheduleHealthAppointmentUseCase(
+                                            appointmentRepository: appointmentRepository,
+                                            requirementRepository: requirementRepository
+                                        )
+                                    )
                                 )
                             } label: {
                                 VStack(alignment: .leading, spacing: 6) {

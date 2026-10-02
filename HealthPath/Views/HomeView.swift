@@ -11,11 +11,16 @@ import SwiftUI
 struct HomeView: View {
 
     @StateObject private var viewModel: HomeViewModel
-    private let dependencies: AppDependencies
+    private let requirementRepository: any HealthRequirementRepository
+    private let appointmentRepository: any AppointmentRepository
 
-    init(viewModel: HomeViewModel, dependencies: AppDependencies) {
+    init(viewModel: HomeViewModel,
+         requirementRepository: any HealthRequirementRepository,
+         appointmentRepository: any AppointmentRepository
+    ) {
         _viewModel = StateObject(wrappedValue: viewModel)
-        self.dependencies = dependencies
+        self.requirementRepository = requirementRepository
+        self.appointmentRepository = appointmentRepository
     }
 
     var body: some View {
@@ -95,8 +100,21 @@ struct HomeView: View {
             if let requirement = viewModel.nextAction {
                 NavigationLink {
                     RequirementDetailView(
-                        viewModel: dependencies.makeRequirementDetailViewModel(requirement: requirement),
-                        appointmentViewModel: dependencies.makeAppointmentViewModel()
+                        viewModel: RequirementDetailViewModel(
+                            requirement: requirement,
+                            requirementRepository: requirementRepository,
+                            appointmentRepository: appointmentRepository,
+                            completeUseCase: CompleteHealthRequirementUseCase(
+                                repository: requirementRepository
+                            )
+                        ),
+                        appointmentViewModel: AppointmentViewModel(
+                            repository: appointmentRepository,
+                            scheduleUseCase: ScheduleHealthAppointmentUseCase(
+                                appointmentRepository: appointmentRepository,
+                                requirementRepository: requirementRepository
+                            )
+                        )
                     )
                 } label: {
                     VStack(alignment: .leading, spacing: 6) {

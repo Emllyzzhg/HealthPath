@@ -15,7 +15,7 @@ struct RequirementStatusBadge: View {
     var body: some View {
         Label(text, systemImage: icon)
             .font(.subheadline)
-            .foregroundColor(colour)
+            .foregroundStyle(colour)
     }
 
     private var text: String {

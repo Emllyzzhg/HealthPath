@@ -6,22 +6,37 @@
 //
 
 import SwiftUI
-import CoreData
+import SwiftData
 
 @main
 struct HealthPathApp: App {
-    let persistenceController = PersistenceController.shared
-    let dependencies: AppDependencies
+    private let container: ModelContainer
+    private let caseRepository: any HealthCaseRepository
+    private let requirementRepository: any HealthRequirementRepository
+    private let appointmentRepository: any AppointmentRepository
 
     init() {
-        dependencies = AppDependencies(
-            context: PersistenceController.shared.container.viewContext
+        let container = try! ModelContainer(
+            for: HealthCaseModel.self,
+            HealthRequirementModel.self,
+            AppointmentModel.self,
+            DocumentModel.self
         )
+        let context = container.mainContext
+        self.container = container
+        caseRepository = SwiftDataHealthCaseRepository(modelContext: context)
+        requirementRepository = SwiftDataHealthRequirementRepository(modelContext: context)
+        appointmentRepository = SwiftDataAppointmentRepository(modelContext: context)
     }
 
     var body: some Scene {
         WindowGroup {
-            RootView(dependencies: dependencies)
+            RootView(
+                caseRepository: caseRepository,
+                requirementRepository: requirementRepository,
+                appointmentRepository: appointmentRepository
+            )
         }
+        .modelContainer(container)
     }
 }

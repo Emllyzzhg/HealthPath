@@ -6,20 +6,31 @@
 //
 
 import SwiftUI
-import CoreData
-
+ 
 struct RootView: View {
-
-    private let dependencies: AppDependencies
+ 
+    private let caseRepository: any HealthCaseRepository
+    private let requirementRepository: any HealthRequirementRepository
+    private let appointmentRepository: any AppointmentRepository
+    
     @StateObject private var startViewModel: AppStartViewModel
-
-    init(dependencies: AppDependencies) {
-        self.dependencies = dependencies
+    
+    init(
+        caseRepository: any HealthCaseRepository,
+        requirementRepository: any HealthRequirementRepository,
+        appointmentRepository: any AppointmentRepository
+    ) {
+        self.caseRepository = caseRepository
+        self.requirementRepository = requirementRepository
+        self.appointmentRepository = appointmentRepository
+        
         _startViewModel = StateObject(
-            wrappedValue: AppStartViewModel(caseRepository: dependencies.caseRepository)
+            wrappedValue: AppStartViewModel(
+                caseRepository: caseRepository
+            )
         )
     }
-
+    
     var body: some View {
         Group {
             if let healthCase = startViewModel.healthCase {
@@ -32,43 +43,48 @@ struct RootView: View {
             startViewModel.load()
         }
     }
-
+    
     /// The four main tabs, shown once the applicant has started their health case.
     private func mainTabs(healthCaseID: UUID) -> some View {
         TabView {
-            HomeView(
-                viewModel: dependencies.makeHomeViewModel(),
-                dependencies: dependencies
-            )
-            .tabItem {
-                Label("Home", systemImage: "house")
+            Tab("Home", systemImage: "house") {
+                HomeView(
+                    viewModel: HomeViewModel(
+                        requirementRepository: requirementRepository,
+                        appointmentRepository: appointmentRepository
+                    ),
+                    requirementRepository: requirementRepository,
+                    appointmentRepository: appointmentRepository
+                )
             }
-
-            RequirementsView(
-                viewModel: dependencies.makeRequirementViewModel(healthCaseID: healthCaseID),
-                dependencies: dependencies
-            )
-            .tabItem {
-                Label("Requirements", systemImage: "checklist")
+            
+            Tab("Requirements", systemImage: "checklist") {
+                RequirementsView(
+                    viewModel: HealthRequirementViewModel(
+                        requirementRepository: requirementRepository,
+                        caseRepository: caseRepository,
+                        healthCaseID: healthCaseID
+                    ),
+                    requirementRepository: requirementRepository,
+                    appointmentRepository: appointmentRepository
+                )
             }
-
-            AppointmentsView(viewModel: dependencies.makeAppointmentViewModel())
-                .tabItem {
-                    Label("Appointments", systemImage: "calendar")
-                }
-
-            Text("Documents")
-                .tabItem {
-                    Label("Documents", systemImage: "doc.text")
-                }
+            
+            Tab("Appointments", systemImage: "calendar") {
+                AppointmentsView(
+                    viewModel: AppointmentViewModel(
+                        repository: appointmentRepository,
+                        scheduleUseCase: ScheduleHealthAppointmentUseCase(
+                            appointmentRepository: appointmentRepository,
+                            requirementRepository: requirementRepository
+                        )
+                    )
+                )
+            }
+            
+            Tab("Documents", systemImage: "doc.text") {
+                Text("Documents")
+            }
         }
     }
-}
-
-#Preview {
-    RootView(
-        dependencies: AppDependencies(
-            context: PersistenceController(inMemory: true).container.viewContext
-        )
-    )
 }

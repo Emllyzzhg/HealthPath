@@ -39,11 +39,12 @@ final class RequirementDetailViewModel: ObservableObject {
         errorMessage = nil
 
         do {
-            if let latest = try requirementRepository.fetchRequirement(withID: requirement.id) {
-                requirement = latest
-            } else {
+            guard let latest = try requirementRepository.fetchRequirement(withID: requirement.id
+            ) else {
                 errorMessage = "We couldn't find this requirement. Go back to your requirements and try again."
+                return
             }
+            requirement = latest
             appointments = try appointmentRepository.fetchAppointments(for: requirement.id)
         } catch {
             errorMessage = "We couldn't load this requirement. Close the app and open it again. If it keeps happening, check that your phone has free storage."
@@ -57,7 +58,7 @@ final class RequirementDetailViewModel: ObservableObject {
         do {
             try completeUseCase.execute(id: requirement.id)
             load()
-            // Once the widget exists, reload it here: WidgetCenter.shared.reloadAllTimelines()
+            // WidgetCenter.shared.reloadAllTimelines()
         } catch {
             if let completeError = error as? CompleteHealthRequirementError {
                 errorMessage = completeError.errorDescription

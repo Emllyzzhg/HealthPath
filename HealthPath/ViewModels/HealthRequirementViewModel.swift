@@ -24,14 +24,16 @@ final class HealthRequirementViewModel: ObservableObject {
     private let healthCaseID: UUID
     
     init(
-        repository: HealthRequirementRepository,
-        addUseCase: AddHealthRequirementUseCase,
-        completeUseCase: CompleteHealthRequirementUseCase,
+        requirementRepository: any HealthRequirementRepository,
+        caseRepository: any HealthCaseRepository,
         healthCaseID: UUID
     ) {
-        self.repository = repository
-        self.addUseCase = addUseCase
-        self.completeUseCase = completeUseCase
+        repository = requirementRepository
+        addUseCase = AddHealthRequirementUseCase(
+            requirementRepository: requirementRepository,
+            caseRepository: caseRepository
+        )
+        completeUseCase = CompleteHealthRequirementUseCase(repository: requirementRepository)
         self.healthCaseID = healthCaseID
     }
     
