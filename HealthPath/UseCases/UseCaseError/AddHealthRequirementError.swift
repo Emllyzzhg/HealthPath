@@ -8,7 +8,7 @@
 import Foundation
 
 /// What can go wrong when an applicant adds a health requirement.
-/// Each case says what went wrong and what the applicant can do next. The  message is shown on the Add Requirement screen.
+/// Each case says what went wrong and what the applicant can do next. The message is shown on the Add Requirement screen.
 /// See AddHealthRequirementUseCase for where each rule is checked.
 enum AddHealthRequirementError: LocalizedError, Equatable {
     /// The requirement has no title. Enter a name such as "Chest X-ray".

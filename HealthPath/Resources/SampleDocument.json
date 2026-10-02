@@ -1,18 +1,18 @@
 [
-    {
-        "id": "D1000000-0000-0000-0000-000000000001",
-        "name": "Chest X-ray referral",
-        "filePath": "ChestXrayReferral.pdf",
-        "dateAdded": "2026-10-02T00:00:00Z",
-        "documentType": "PDF",
-        "healthRequirementID": "B1000000-0000-0000-0000-000000000001"
-    },
-    {
-        "id": "D1000000-0000-0000-0000-000000000002",
-        "name": "Blood test referral",
-        "filePath": "BloodTestReferral.pdf",
-        "dateAdded": "2026-10-02T01:00:00Z",
-        "documentType": "PDF",
-        "healthRequirementID": "B1000000-0000-0000-0000-000000000002"
-    }
+  {
+    "id": "D1000000-0000-0000-0000-000000000001",
+    "name": "Chest X-ray referral",
+    "filePath": "referral.pdf",
+    "dateAdded": "2026-09-28T00:00:00Z",
+    "documentType": "Referral",
+    "healthRequirementID": "B1000000-0000-0000-0000-000000000001"
+  },
+  {
+    "id": "D1000000-0000-0000-0000-000000000002",
+    "name": "Specialist letter",
+    "filePath": "letter.pdf",
+    "dateAdded": "2026-09-24T00:00:00Z",
+    "documentType": "Specialist letter",
+    "healthRequirementID": "B1000000-0000-0000-0000-000000000003"
+  }
 ]

@@ -10,13 +10,19 @@ import SwiftData
  
 @Model
 final class HealthRequirementModel {
-    var id: UUID
+    @Attribute(.unique) var id: UUID
     var title: String
     var descriptionText: String
     var dueDate: Date
     var status: String
-    var healthCaseID: UUID
     var completedDate: Date?
+    var healthCase: HealthCaseModel?
+    
+    @Relationship(deleteRule: .cascade, inverse: \AppointmentModel.healthRequirement)
+    var appointments: [AppointmentModel] = []
+    
+    @Relationship(deleteRule: .cascade, inverse: \DocumentModel.healthRequirement)
+    var documents: [DocumentModel] = []
  
     init(
         id: UUID,
@@ -24,7 +30,6 @@ final class HealthRequirementModel {
         descriptionText: String,
         dueDate: Date,
         status: String,
-        healthCaseID: UUID,
         completedDate: Date? = nil
     ) {
         self.id = id
@@ -32,7 +37,6 @@ final class HealthRequirementModel {
         self.descriptionText = descriptionText
         self.dueDate = dueDate
         self.status = status
-        self.healthCaseID = healthCaseID
         self.completedDate = completedDate
     }
 }

@@ -17,7 +17,7 @@ import Foundation
 /// 3. The status must be updated and saved. The date it was completed is recorded, so Home can show recent activity.
 ///
 /// This use case never talks to the database directly.
-/// The requirement shows "Completed" in green on the Requirements list and its details screen. Completing a requirement doesn't touch its appointments or documents, and it doesn't record a completion date.
+/// The requirement shows "Completed" in green on the Requirements list and its details screen. Completing a requirement doesn't change its appointments or documents.
 /// Home counts it in "completed" progress (for example "3 of 5") and no longer shows it as the next action. The widget stops showing it.
 /// When a rule is broken, the screen shows the error's message and nothing is saved.
 

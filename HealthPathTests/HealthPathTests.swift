@@ -13,9 +13,9 @@ struct HealthPathTests {
 
     /// An applicant adds "Chest X-ray" to their existing health case, and it is saved.
     @Test func addRequirement_withTitleAndExistingHealthCase_savesIt() throws {
-        let requirementRepository = MockHealthRequirementRepository()
-        let caseRepository = MockHealthCaseRepository()
-        let healthCaseID = UUID()
+        let requirementRepository = LocalHealthRequirementRepository()
+        let caseRepository = LocalHealthCaseRepository()
+        let healthCaseID = UUID(uuidString: "B1000000-0000-0000-0000-000000000001")!
         // Tell the fake case repository that a health case with that ID exists
         caseRepository.healthCase = HealthCase(id: healthCaseID, createdDate: Date())
         // Create the use case using those mocks

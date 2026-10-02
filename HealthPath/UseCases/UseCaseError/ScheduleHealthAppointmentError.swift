@@ -23,7 +23,7 @@ enum ScheduleHealthAppointmentError: LocalizedError, Equatable {
         case .emptyTitle:
             return "This appointment needs a title. Enter a name such as \"Chest X-ray\"."
         case .appointmentInPast:
-            return "This appointment date has already passed. Choose today or a later date, or check the date on your appointment letter."
+            return "This appointment date or time has already passed. Choose a later date or time, or check the details on your appointment letter."
         case .requirementNotFound:
             return "We couldn't find the health requirement for this appointment. Go back to your requirements, choose one, and try again."
         }

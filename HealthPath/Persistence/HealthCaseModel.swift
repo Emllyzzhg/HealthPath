@@ -10,8 +10,11 @@ import SwiftData
  
 @Model
 final class HealthCaseModel {
-    var id: UUID
+    @Attribute(.unique) var id: UUID
     var createdDate: Date
+    
+    @Relationship(deleteRule: .cascade, inverse: \HealthRequirementModel.healthCase)
+    var requirements: [HealthRequirementModel] = []
  
     init(
         id: UUID,

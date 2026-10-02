@@ -7,29 +7,28 @@
 
 import Foundation
 import SwiftData
- 
+
 @Model
 final class DocumentModel {
-    var id: UUID
+    @Attribute(.unique) var id: UUID
     var name: String
     var filePath: String
     var dateAdded: Date
     var documentType: String
-    var healthRequirementID: UUID
- 
+
+    var healthRequirement: HealthRequirementModel?
+
     init(
         id: UUID,
         name: String,
         filePath: String,
         dateAdded: Date,
-        documentType: String,
-        healthRequirementID: UUID
+        documentType: String
     ) {
         self.id = id
         self.name = name
         self.filePath = filePath
         self.dateAdded = dateAdded
         self.documentType = documentType
-        self.healthRequirementID = healthRequirementID
     }
 }

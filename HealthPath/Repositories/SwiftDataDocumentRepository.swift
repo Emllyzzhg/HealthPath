@@ -25,8 +25,7 @@ final class SwiftDataDocumentRepository: DocumentRepository {
             sortBy: [SortDescriptor(\.dateAdded, order: .reverse)]
         )
         let models = try modelContext.fetch(descriptor)
-        return models.map { model in
-            makeDocument(from: model)
+        return models.compactMap { model in makeDocument(from: model)
         }
     }
     
@@ -36,19 +35,17 @@ final class SwiftDataDocumentRepository: DocumentRepository {
         let selectedRequirementID = requirementID
         let descriptor = FetchDescriptor<DocumentModel>(
             predicate: #Predicate {
-                $0.healthRequirementID == selectedRequirementID
+                $0.healthRequirement?.id == selectedRequirementID
             },
             sortBy: [SortDescriptor(\.dateAdded, order: .reverse)]
         )
         let models = try modelContext.fetch(descriptor)
-        return models.map { model in
-            makeDocument(from: model)
+        return models.compactMap { model in makeDocument(from: model)
         }
     }
     
     /// Saves a newly added document and links it to its health requirement.
-    /// - Throws: DocumentRepositoryError.requirementNotFound if the health
-    /// requirement does not exist.
+    /// - Throws: DocumentRepositoryError.requirementNotFound if the health requirement does not exist.
     func add(_ document: Document) throws {
         let requirementID = document.healthRequirementID
         let requirementDescriptor = FetchDescriptor<HealthRequirementModel>(
@@ -56,7 +53,7 @@ final class SwiftDataDocumentRepository: DocumentRepository {
                 $0.id == requirementID
             }
         )
-        guard try modelContext.fetch(requirementDescriptor).first != nil else {
+        guard let requirementModel = try modelContext.fetch(requirementDescriptor).first else {
             throw DocumentRepositoryError.requirementNotFound
         }
         let model = DocumentModel(
@@ -64,18 +61,16 @@ final class SwiftDataDocumentRepository: DocumentRepository {
             name: document.name,
             filePath: document.filePath,
             dateAdded: document.dateAdded,
-            documentType: document.documentType,
-            healthRequirementID: document.healthRequirementID
+            documentType: document.documentType
         )
         modelContext.insert(model)
+        model.healthRequirement = requirementModel
         try modelContext.save()
     }
     
     /// Saves changes to an existing document, for example a new name.
-    /// A document stays with the requirement it was added to, and its date
-    /// added does not change.
-    /// - Throws: DocumentRepositoryError.documentNotFound if the document
-    /// is no longer stored.
+    /// A document stays with the requirement it was added to, and its date added does not change.
+    /// - Throws: DocumentRepositoryError.documentNotFound if the document is no longer stored.
     func update(_ document: Document) throws {
         let documentID = document.id
         let descriptor = FetchDescriptor<DocumentModel>(
@@ -108,16 +103,17 @@ final class SwiftDataDocumentRepository: DocumentRepository {
         }
     }
     
-    private func makeDocument(
-        from model: DocumentModel
-    ) -> Document {
-        Document(
+    private func makeDocument(from model: DocumentModel) -> Document? {
+        guard let requirementID = model.healthRequirement?.id else {
+            return nil
+        }
+        return Document(
             id: model.id,
             name: model.name,
             filePath: model.filePath,
             dateAdded: model.dateAdded,
             documentType: model.documentType,
-            healthRequirementID: model.healthRequirementID
+            healthRequirementID: requirementID
         )
     }
 }

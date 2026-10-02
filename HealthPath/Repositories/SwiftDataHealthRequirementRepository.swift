@@ -24,9 +24,7 @@ final class SwiftDataHealthRequirementRepository: HealthRequirementRepository {
             sortBy: [SortDescriptor(\.dueDate)]
         )
         let models = try modelContext.fetch(descriptor)
-        return models.map { model in
-            makeHealthRequirement(from: model)
-        }
+        return models.compactMap { model in makeHealthRequirement(from: model) }
     }
     
     /// Returns the requirement with this ID, or nil if it can't be found.
@@ -44,6 +42,23 @@ final class SwiftDataHealthRequirementRepository: HealthRequirementRepository {
         return makeHealthRequirement(from: model)
     }
     
+    /// Returns the requirements that are not completed and are due within the next 7 days, earliest due date first.
+    /// Used for "Next action" on Home and for the widget.
+    func fetchUpcomingRequirements() throws -> [HealthRequirement] {
+        let completed = HealthRequirementStatus.completed.rawValue
+        let startOfToday = Calendar.current.startOfDay(for: .now)
+        let weekAhead = Calendar.current.date(byAdding: .day, value: 7, to: startOfToday) ?? startOfToday
+
+        let descriptor = FetchDescriptor<HealthRequirementModel>(
+            predicate: #Predicate {
+                $0.status != completed && $0.dueDate >= startOfToday && $0.dueDate <= weekAhead
+            },
+            sortBy: [SortDescriptor(\.dueDate)]
+        )
+        let models = try modelContext.fetch(descriptor)
+        return models.compactMap { model in makeHealthRequirement(from: model) }
+    }
+    
     /// Saves a newly recorded requirement and links it to the applicant's health case.
     /// - Throws: HealthRequirementRepositoryError.healthCaseNotFound if the case is not found.
     func add(_ requirement: HealthRequirement) throws {
@@ -53,7 +68,7 @@ final class SwiftDataHealthRequirementRepository: HealthRequirementRepository {
                 $0.id == healthCaseID
             }
         )
-        guard try modelContext.fetch(caseDescriptor).first != nil else {
+        guard let caseModel = try modelContext.fetch(caseDescriptor).first else {
             throw HealthRequirementRepositoryError.healthCaseNotFound
         }
         let model = HealthRequirementModel(
@@ -62,10 +77,10 @@ final class SwiftDataHealthRequirementRepository: HealthRequirementRepository {
             descriptionText: requirement.descriptionText,
             dueDate: requirement.dueDate,
             status: requirement.status.rawValue,
-            healthCaseID: requirement.healthCaseID,
             completedDate: requirement.completedDate
         )
         modelContext.insert(model)
+        model.healthCase = caseModel
         try modelContext.save()
     }
     
@@ -106,17 +121,18 @@ final class SwiftDataHealthRequirementRepository: HealthRequirementRepository {
         }
     }
     
-    private func makeHealthRequirement(
-        from model: HealthRequirementModel
-    ) -> HealthRequirement {
-        HealthRequirement(
+    private func makeHealthRequirement(from model: HealthRequirementModel) -> HealthRequirement? {
+        guard let healthCaseID = model.healthCase?.id else {
+            return nil
+        }
+        return HealthRequirement(
             id: model.id,
             title: model.title,
             descriptionText: model.descriptionText,
             dueDate: model.dueDate,
             status: HealthRequirementStatus(rawValue: model.status)
-                ?? .actionRequired,
-            healthCaseID: model.healthCaseID,
+            ?? .actionRequired,
+            healthCaseID: healthCaseID,
             completedDate: model.completedDate
         )
     }

@@ -13,7 +13,7 @@ import Foundation
 ///
 /// Business rules
 /// 1. An appointment must have a title, such as "Chest X-ray".
-/// 2. An appointment date cannot be in the past. Someone who attended before installing the app would instead add the requirement as completed and attach the documents.
+/// 2. An appointment date and time cannot be in the past. Someone who attended before installing the app would instead add the requirement as completed and attach the documents.
 /// 3. An appointment must belong to a health requirement that exists.
 ///
 /// The appointment is saved only after all three rules pass, through AppointmentRepository. This use case never talks to the database directly.
@@ -37,9 +37,8 @@ struct ScheduleHealthAppointmentUseCase {
             throw ScheduleHealthAppointmentError.emptyTitle
         }
 
-        // Rule 2: the date cannot be before today.
-        let startOfToday = Calendar.current.startOfDay(for: now)
-        if appointment.date < startOfToday {
+        // Rule 2: the date and time cannot be in the past.
+        if appointment.date < now {
             throw ScheduleHealthAppointmentError.appointmentInPast
         }
 
@@ -49,7 +48,7 @@ struct ScheduleHealthAppointmentUseCase {
             throw ScheduleHealthAppointmentError.requirementNotFound
         }
 
-        // All rules passed, so save the requirement with the spaces removed from its title.
+        // All rules passed, so save the appointment with the spaces removed from its title.
         var cleanedAppointment = appointment
         cleanedAppointment.title = trimmedTitle
         try appointmentRepository.add(cleanedAppointment)

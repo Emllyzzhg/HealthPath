@@ -13,7 +13,7 @@ import SwiftData
 /// Use cases work through HealthCaseRepository, so the business rules never depend on SwiftData.
 final class SwiftDataHealthCaseRepository: HealthCaseRepository {
     private let modelContext: ModelContext
-    
+    /// The SwiftData context used to read and save the health case.
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
     }
