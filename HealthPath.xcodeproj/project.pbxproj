@@ -10,6 +10,7 @@
 		9F20209E30712838004DA399 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20209D30712838004DA399 /* WidgetKit.framework */; };
 		9F2020A030712838004DA399 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20209F30712838004DA399 /* SwiftUI.framework */; };
 		9F2020AB3071283A004DA399 /* HealthPathWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 9F20209B30712838004DA399 /* HealthPathWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		9F2021D23071662D004DA399 /* HealthPathShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 9F2021C83071662C004DA399 /* HealthPathShareExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -27,6 +28,13 @@
 			remoteGlobalIDString = 9F20209A30712838004DA399;
 			remoteInfo = HealthPathWidgetExtension;
 		};
+		9F2021D03071662D004DA399 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9F201BCB30678903004DA399 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9F2021C73071662C004DA399;
+			remoteInfo = HealthPathShareExtension;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -36,6 +44,7 @@
 			dstSubfolder = PlugIns;
 			files = (
 				9F2020AB3071283A004DA399 /* HealthPathWidgetExtension.appex in Embed Foundation Extensions */,
+				9F2021D23071662D004DA399 /* HealthPathShareExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 		};
@@ -47,6 +56,8 @@
 		9F20209B30712838004DA399 /* HealthPathWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HealthPathWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F20209D30712838004DA399 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		9F20209F30712838004DA399 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		9F2021BF3071435C004DA399 /* HealthPathWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HealthPathWidgetExtension.entitlements; sourceTree = "<group>"; };
+		9F2021C83071662C004DA399 /* HealthPathShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HealthPathShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -56,6 +67,13 @@
 				Info.plist,
 			);
 			target = 9F20209A30712838004DA399 /* HealthPathWidgetExtension */;
+		};
+		9F2021D33071662D004DA399 /* Exceptions for "HealthPathShareExtension" folder in "HealthPathShareExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 9F2021C73071662C004DA399 /* HealthPathShareExtension */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -78,6 +96,14 @@
 			path = HealthPathWidget;
 			sourceTree = "<group>";
 		};
+		9F2021C93071662C004DA399 /* HealthPathShareExtension */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				9F2021D33071662D004DA399 /* Exceptions for "HealthPathShareExtension" folder in "HealthPathShareExtension" target */,
+			);
+			path = HealthPathShareExtension;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,15 +124,22 @@
 				9F20209E30712838004DA399 /* WidgetKit.framework in Frameworks */,
 			);
 		};
+		9F2021C53071662C004DA399 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		9F201BCA30678903004DA399 = {
 			isa = PBXGroup;
 			children = (
+				9F2021BF3071435C004DA399 /* HealthPathWidgetExtension.entitlements */,
 				9F201BD530678903004DA399 /* HealthPath */,
 				9F201BE830678905004DA399 /* HealthPathTests */,
 				9F2020A130712838004DA399 /* HealthPathWidget */,
+				9F2021C93071662C004DA399 /* HealthPathShareExtension */,
 				9F20209C30712838004DA399 /* Frameworks */,
 				9F201BD430678903004DA399 /* Products */,
 			);
@@ -118,6 +151,7 @@
 				9F201BD330678903004DA399 /* HealthPath.app */,
 				9F201BE530678905004DA399 /* HealthPathTests.xctest */,
 				9F20209B30712838004DA399 /* HealthPathWidgetExtension.appex */,
+				9F2021C83071662C004DA399 /* HealthPathShareExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -147,6 +181,7 @@
 			);
 			dependencies = (
 				9F2020AA3071283A004DA399 /* PBXTargetDependency */,
+				9F2021D13071662D004DA399 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				9F201BD530678903004DA399 /* HealthPath */,
@@ -195,6 +230,24 @@
 			productReference = 9F20209B30712838004DA399 /* HealthPathWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		9F2021C73071662C004DA399 /* HealthPathShareExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9F2021D43071662D004DA399 /* Build configuration list for PBXNativeTarget "HealthPathShareExtension" */;
+			buildPhases = (
+				9F2021C43071662C004DA399 /* Sources */,
+				9F2021C53071662C004DA399 /* Frameworks */,
+				9F2021C63071662C004DA399 /* Resources */,
+			);
+			buildRules = (
+			);
+			fileSystemSynchronizedGroups = (
+				9F2021C93071662C004DA399 /* HealthPathShareExtension */,
+			);
+			name = HealthPathShareExtension;
+			productName = HealthPathShareExtension;
+			productReference = 9F2021C83071662C004DA399 /* HealthPathShareExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -213,6 +266,9 @@
 						TestTargetID = 9F201BD230678903004DA399;
 					};
 					9F20209A30712838004DA399 = {
+						CreatedOnToolsVersion = 27.0;
+					};
+					9F2021C73071662C004DA399 = {
 						CreatedOnToolsVersion = 27.0;
 					};
 				};
@@ -234,6 +290,7 @@
 				9F201BD230678903004DA399 /* HealthPath */,
 				9F201BE430678905004DA399 /* HealthPathTests */,
 				9F20209A30712838004DA399 /* HealthPathWidgetExtension */,
+				9F2021C73071662C004DA399 /* HealthPathShareExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -250,6 +307,11 @@
 			);
 		};
 		9F20209930712838004DA399 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+		9F2021C63071662C004DA399 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
 			);
@@ -272,6 +334,11 @@
 			files = (
 			);
 		};
+		9F2021C43071662C004DA399 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -284,6 +351,11 @@
 			isa = PBXTargetDependency;
 			target = 9F20209A30712838004DA399 /* HealthPathWidgetExtension */;
 			targetProxy = 9F2020A93071283A004DA399 /* PBXContainerItemProxy */;
+		};
+		9F2021D13071662D004DA399 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9F2021C73071662C004DA399 /* HealthPathShareExtension */;
+			targetProxy = 9F2021D03071662D004DA399 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -321,6 +393,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = HealthPath.entitlements;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -384,6 +457,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = HealthPath.entitlements;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -530,7 +604,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_ENTITLEMENTS = HealthPathWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = U62X53LH8R;
@@ -562,7 +636,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_ENTITLEMENTS = HealthPathWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = U62X53LH8R;
@@ -577,6 +651,64 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.Assignment3.HealthPath.HealthPathWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		9F2021D53071662D004DA399 /* Debug configuration for PBXNativeTarget "HealthPathShareExtension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = U62X53LH8R;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HealthPathShareExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = HealthPathShareExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Assignment3.HealthPath.HealthPathShareExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		9F2021D63071662D004DA399 /* Release configuration for PBXNativeTarget "HealthPathShareExtension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = U62X53LH8R;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HealthPathShareExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = HealthPathShareExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Assignment3.HealthPath.HealthPathShareExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
@@ -621,6 +753,14 @@
 			buildConfigurations = (
 				9F2020AE3071283A004DA399 /* Debug configuration for PBXNativeTarget "HealthPathWidgetExtension" */,
 				9F2020AF3071283A004DA399 /* Release configuration for PBXNativeTarget "HealthPathWidgetExtension" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		9F2021D43071662D004DA399 /* Build configuration list for PBXNativeTarget "HealthPathShareExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9F2021D53071662D004DA399 /* Debug configuration for PBXNativeTarget "HealthPathShareExtension" */,
+				9F2021D63071662D004DA399 /* Release configuration for PBXNativeTarget "HealthPathShareExtension" */,
 			);
 			defaultConfigurationName = Release;
 		};

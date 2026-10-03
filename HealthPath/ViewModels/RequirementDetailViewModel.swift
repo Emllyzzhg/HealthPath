@@ -58,7 +58,6 @@ final class RequirementDetailViewModel: ObservableObject {
         do {
             try completeUseCase.execute(id: requirement.id)
             load()
-            // WidgetCenter.shared.reloadAllTimelines()
         } catch {
             if let completeError = error as? CompleteHealthRequirementError {
                 errorMessage = completeError.errorDescription

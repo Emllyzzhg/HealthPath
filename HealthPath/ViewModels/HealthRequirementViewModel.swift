@@ -61,6 +61,11 @@ final class HealthRequirementViewModel: ObservableObject {
     func loadRequirements() {
         do {
             requirements = try repository.fetchAll()
+            let nextRequirement = requirements
+                .filter { $0.status != .completed }
+                .sorted { $0.dueDate < $1.dueDate }
+                .first
+            HealthPathWidgetData.save(requirement: nextRequirement)
             errorMessage = nil
         } catch {
             errorMessage = "We couldn't load your health requirements. Close the app and open it again. If it keeps happening, check that your phone has free storage."
@@ -85,7 +90,6 @@ final class HealthRequirementViewModel: ObservableObject {
         do {
             try addUseCase.execute(requirement)
             loadRequirements()
-            // WidgetCenter.shared.reloadAllTimelines()
             return true
         } catch {
             if let addError = error as? AddHealthRequirementError {
@@ -102,11 +106,9 @@ final class HealthRequirementViewModel: ObservableObject {
     /// Marks a requirement as completed.
     func complete(id: UUID) {
         errorMessage = nil
-        
         do {
             try completeUseCase.execute(id: id)
             loadRequirements()
-            // for widget
         } catch {
             if let completeError = error as? CompleteHealthRequirementError {
                 errorMessage = completeError.errorDescription

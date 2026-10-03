@@ -7,7 +7,8 @@
 
 import Foundation
 
-/// Saves document files on the device and returns the path to the saved file.
+/// Saves scanned PDF files on the app's Local Documents directory on the device  and returns the path to the saved file.
+/// The PDF itself is stored as a file, while its file path is stored in SwiftData
 struct DocumentStorageService {
     enum Error: LocalizedError {
         case emptyDocument

@@ -8,8 +8,7 @@
 import Foundation
 import Combine
 
-/// Drives the Appointments screens: the chronological list, scheduling an
-/// appointment for a requirement and removing an appointment.
+/// Drives the Appointments screens: the chronological list, scheduling an appointment for a requirement and removing an appointment.
 @MainActor
 final class AppointmentViewModel: ObservableObject {
 
@@ -32,6 +31,7 @@ final class AppointmentViewModel: ObservableObject {
     func loadAppointments() {
         do {
             appointments = try repository.fetchAll()
+            HealthPathWidgetData.save(appointments: appointments)
             errorMessage = nil
         } catch {
             errorMessage = "We couldn't load your appointments. Close the app and open it again. If it keeps happening, check that your phone has free storage."
@@ -62,7 +62,6 @@ final class AppointmentViewModel: ObservableObject {
         do {
             try scheduleUseCase.execute(appointment)
             loadAppointments()
-            // for widget
             return true
         } catch {
             if let scheduleError = error as? ScheduleHealthAppointmentError {
@@ -83,7 +82,6 @@ final class AppointmentViewModel: ObservableObject {
         do {
             try repository.delete(appointment)
             loadAppointments()
-            // Once the widget exists, reload it here: WidgetCenter.shared.reloadAllTimelines()
         } catch {
             errorMessage = "We couldn't remove this appointment. Close the app and open it again, then try once more."
         }

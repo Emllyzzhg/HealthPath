@@ -13,6 +13,8 @@ struct HealthPathEntry: TimelineEntry {
     let date: Date
     let requirementTitle: String
     let dueDate: Date?
+    let appointmentTitle: String?
+    let appointmentDate: Date?
 }
  
 /// Provides timeline entries for the HealthPath widget.
@@ -21,7 +23,9 @@ struct HealthPathProvider: TimelineProvider {
         HealthPathEntry(
             date: .now,
             requirementTitle: "Chest X-ray",
-            dueDate: .now
+            dueDate: .now,
+            appointmentTitle: "Chest X-ray Appointment",
+            appointmentDate: .now
         )
     }
  
@@ -32,7 +36,9 @@ struct HealthPathProvider: TimelineProvider {
         let entry = HealthPathEntry(
             date: .now,
             requirementTitle: "Chest X-ray",
-            dueDate: .now
+            dueDate: .now,
+            appointmentTitle: "Chest X-ray Appointment",
+            appointmentDate: .now
         )
         completion(entry)
     }
@@ -41,11 +47,30 @@ struct HealthPathProvider: TimelineProvider {
         in context: Context,
         completion: @escaping (Timeline<HealthPathEntry>) -> Void
     ) {
+        let sharedDefaults = UserDefaults(
+            suiteName: "group.com.Assignment3.HealthPath"
+        )
+        let requirementTitle = sharedDefaults?.string(
+            forKey: "nextRequirementTitle"
+        ) ?? "No upcoming requirements"
+        let dueDate = sharedDefaults?.object(
+            forKey: "nextRequirementDueDate"
+        ) as? Date
+        let appointmentTitle = sharedDefaults?.string(
+            forKey: "nextAppointmentTitle"
+        )
+        let appointmentDate = sharedDefaults?.object(
+            forKey: "nextAppointmentDate"
+        ) as? Date
+        
         let entry = HealthPathEntry(
             date: .now,
-            requirementTitle: "Chest X-ray",
-            dueDate: .now
+            requirementTitle: requirementTitle,
+            dueDate: dueDate,
+            appointmentTitle: appointmentTitle,
+            appointmentDate: appointmentDate
         )
+        
         let timeline = Timeline(
             entries: [entry],
             policy: .never
@@ -57,7 +82,9 @@ struct HealthPathProvider: TimelineProvider {
 /// Displays HealthPath information based on the widget size.
 struct HealthPathWidgetView: View {
     var entry: HealthPathEntry
+    
     @Environment(\.widgetFamily) private var family
+    
     var body: some View {
         if family == .systemSmall {
             VStack(alignment: .leading, spacing: 8) {
@@ -66,8 +93,12 @@ struct HealthPathWidgetView: View {
                     .font(.caption)
                 Text(entry.requirementTitle)
                     .font(.headline)
-                if let dueDate = entry.dueDate {
-                    Text(dueDate, style: .date)
+                if let appointmentDate = entry.appointmentDate {
+                    Text("Appointment")
+                        .font(.caption)
+                    Text(appointmentDate, style: .date)
+                        .font(.caption)
+                    Text(appointmentDate, style: .time)
                         .font(.caption)
                 }
                 Spacer()
@@ -86,9 +117,18 @@ struct HealthPathWidgetView: View {
                 .font(.headline)
                 Text(entry.requirementTitle)
                     .font(.title3)
-                if let dueDate = entry.dueDate {
-                    Text("Due \(dueDate, style: .date)")
+                if let appointmentDate = entry.appointmentDate {
+                    Text("Appointment: \(appointmentDate, style: .date)")
                         .font(.subheadline)
+                    Text(appointmentDate, style: .time)
+                        .font(.subheadline)
+                } else {
+                    Text("No appointment scheduled")
+                        .font(.subheadline)
+                }
+                if let dueDate = entry.dueDate {
+                    Text("Due Date: \(dueDate, style: .date)")
+                        .font(.caption)
                 }
                 Spacer()
             }
@@ -118,7 +158,7 @@ struct HealthPathWidget: Widget {
                 )
         }
         .configurationDisplayName("HealthPath")
-        .description("View your next health requirement.")
+        .description("View your next health requirement and appointment.")
         .supportedFamilies([
             .systemSmall,
             .systemMedium
@@ -132,7 +172,9 @@ struct HealthPathWidget: Widget {
     HealthPathEntry(
         date: .now,
         requirementTitle: "Chest X-ray",
-        dueDate: .now
+        dueDate: .now,
+        appointmentTitle: "Chest X-ray Appointment",
+        appointmentDate: .now
     )
 }
 #Preview("HealthPath - Medium", as: .systemMedium) {
@@ -141,6 +183,8 @@ struct HealthPathWidget: Widget {
     HealthPathEntry(
         date: .now,
         requirementTitle: "Specialist Appointment",
-        dueDate: .now
+        dueDate: .now,
+        appointmentTitle: "Sputum Test Appointment",
+        appointmentDate: .now
     )
 }
