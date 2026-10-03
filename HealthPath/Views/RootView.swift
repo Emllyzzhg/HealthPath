@@ -12,17 +12,20 @@ struct RootView: View {
     private let caseRepository: any HealthCaseRepository
     private let requirementRepository: any HealthRequirementRepository
     private let appointmentRepository: any AppointmentRepository
+    private let documentRepository: any DocumentRepository
     
     @StateObject private var startViewModel: AppStartViewModel
     
     init(
         caseRepository: any HealthCaseRepository,
         requirementRepository: any HealthRequirementRepository,
-        appointmentRepository: any AppointmentRepository
+        appointmentRepository: any AppointmentRepository,
+        documentRepository: any DocumentRepository
     ) {
         self.caseRepository = caseRepository
         self.requirementRepository = requirementRepository
         self.appointmentRepository = appointmentRepository
+        self.documentRepository = documentRepository
         
         _startViewModel = StateObject(
             wrappedValue: AppStartViewModel(
@@ -83,7 +86,13 @@ struct RootView: View {
             }
             
             Tab("Documents", systemImage: "doc.text") {
-                Text("Documents")
+                DocumentsView(
+                    viewModel:DocumentViewModel(
+                        documentRepository: documentRepository,
+                        requirementRepository: requirementRepository
+                    ),
+                    requirementRepository: requirementRepository
+                )
             }
         }
     }

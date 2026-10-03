@@ -10,14 +10,14 @@ import Foundation
 /// Adds one of the applicant's health documents to a health requirement.
 /// For example, an applicant can add a chest X-ray referral and keep it with their "Chest X-ray" requirement so they can find it later.
 /// HealthPath keeps the applicant's own copy of the document. It does not send documents to Home Affairs or eMedical.
+/// The file itself is saved before this runs, so the document only records its file name.
 ///
 /// Business rules
 /// 1. A document must have a name, such as "Chest X-ray referral".
 /// 2. A document must have a saved file.
 /// 3. A document must belong to a health requirement that exists.
 ///
-/// The document is saved only after all three rules pass, through
-/// DocumentRepository. This use case never talks to the database directly.
+/// The document is saved only after all three rules pass, through DocumentRepository. This use case never talks to the database directly.
 /// When a rule is broken, the screen shows the error's message and nothing is saved.
 struct AddDocumentUseCase {
  

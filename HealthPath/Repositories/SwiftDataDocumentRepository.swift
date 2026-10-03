@@ -11,8 +11,9 @@ import SwiftData
 /// Keeps the applicant's health documents in the app's SwiftData store.
 /// This is the only place that talks to the database about documents.
 /// Use cases work through DocumentRepository, so the business rules never depend on SwiftData.
-/// The database keeps each document's details and the name of its saved file.
+/// The database keeps each document's details and the path to its saved file.
 /// The file itself is stored separately on the device.
+/// The saved file is not removed here. 
 final class SwiftDataDocumentRepository: DocumentRepository {
     private let modelContext: ModelContext
     

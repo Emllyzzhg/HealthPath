@@ -14,6 +14,7 @@ struct HealthPathApp: App {
     private let caseRepository: any HealthCaseRepository
     private let requirementRepository: any HealthRequirementRepository
     private let appointmentRepository: any AppointmentRepository
+    private let documentRepository: any DocumentRepository
 
     init() {
         let container = try! ModelContainer(
@@ -27,6 +28,7 @@ struct HealthPathApp: App {
         caseRepository = SwiftDataHealthCaseRepository(modelContext: context)
         requirementRepository = SwiftDataHealthRequirementRepository(modelContext: context)
         appointmentRepository = SwiftDataAppointmentRepository(modelContext: context)
+        documentRepository = SwiftDataDocumentRepository(modelContext: context)
     }
 
     var body: some Scene {
@@ -34,7 +36,8 @@ struct HealthPathApp: App {
             RootView(
                 caseRepository: caseRepository,
                 requirementRepository: requirementRepository,
-                appointmentRepository: appointmentRepository
+                appointmentRepository: appointmentRepository,
+                documentRepository : documentRepository
             )
         }
         .modelContainer(container)

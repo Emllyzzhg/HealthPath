@@ -13,7 +13,7 @@ import Foundation
 ///
 /// Business rules
 /// 1. A document must have a name, such as "Medical Examination Receipt".
-/// 2. A document must contain data. An empty file cannot be saved.
+/// 2. A document must have a saved file. A document without a file cannot be added.
 /// 3. A document must belong to a health requirement that exists.
 ///
 /// These rules are checked when the applicant adds a document. See AddDocumentUseCase.
