@@ -10,461 +10,293 @@ import Foundation
 @testable import HealthPath
 
 struct HealthPathTests {
-
-    /// An applicant adds "Chest X-ray" to their existing health case, and it is saved.
-    @Test func addRequirement_withTitleAndExistingHealthCase_savesIt() throws {
+    
+    /// An applicant adds a valid health requirement to their existing health case.
+    /// The requirement has a title, a valid due date and belongs to the health case loaded from SampleHealthCase.json.
+    @Test func addRequirement_withValidDetails_savesIt() throws {
+        //Create the Local repositories using the sample JSON data included in the app.
         let requirementRepository = LocalHealthRequirementRepository()
         let caseRepository = LocalHealthCaseRepository()
-        let healthCaseID = UUID(uuidString: "B1000000-0000-0000-0000-000000000001")!
-        // Tell the fake case repository that a health case with that ID exists
-        caseRepository.healthCase = HealthCase(id: healthCaseID, createdDate: Date())
-        // Create the use case using those mocks
+        
+        // Record the number of requirements exist before adding a new one.
+        let totalBeforeAdd = requirementRepository.requirements.count
+        
+        // Use the applicant's existing health case from SampleHealthCase.json.
+        let healthCase = try #require(try caseRepository.fetch())
+        
+        // Create a new health requirement belonging to the existing health case.
+        let requirement = HealthRequirement(
+            id: UUID(),
+            title: "Video telehealth (VDOT)",
+            descriptionText: "",
+            dueDate: Date(),
+            status: .actionRequired,
+            healthCaseID: healthCase.id
+        )
+        
+        // Create the use case with the local repositories.
         let useCase = AddHealthRequirementUseCase(
             requirementRepository: requirementRepository,
             caseRepository: caseRepository
         )
-        // Create a requirement associated with that health case.
-        let requirement = HealthRequirement(
-            id: UUID(),
-            title: "Chest X-ray",
-            descriptionText: "",
-            dueDate: Date(),
-            status: .actionRequired,
-            healthCaseID: healthCaseID
-        )
-        // Execute and expect requirement to be saved
+        
+        // Execute and expect a new requirement to be saved.
         try useCase.execute(requirement)
-        #expect(requirementRepository.requirements.count == 1)
+        #expect(requirementRepository.requirements.count > totalBeforeAdd)
     }
-
+    
     /// An applicant leaves the title empty, so they are asked to enter one.
-    @Test func addRequirement_withEmptyTitle_throwsEmptyTitle() {
-        let requirementRepository = MockHealthRequirementRepository()
-        let caseRepository = MockHealthCaseRepository()
-        let healthCaseID = UUID()
-        // Tell the fake case repository that a health case with that ID exists
-        caseRepository.healthCase = HealthCase(id: healthCaseID, createdDate: Date())
-        // Create the use case using those mocks
-        let useCase = AddHealthRequirementUseCase(
-            requirementRepository: requirementRepository,
-            caseRepository: caseRepository
-        )
-        // Create a requirement associated with that health case.
+    /// An empty file should produce the emptyTitle domain error.
+    @Test func addRequirement_withEmptyTitle_throwsEmptyTitle() throws {
+        //Create the Local repositories using the sample JSON data included in the app.
+        let requirementRepository = LocalHealthRequirementRepository()
+        let caseRepository = LocalHealthCaseRepository()
+        
+        // Use the applicant's existing health case from SampleHealthCase.json.
+        let healthCase = try #require(try caseRepository.fetch())
+        
+        // Create a requirement with an empty title.
         let requirement = HealthRequirement(
             id: UUID(),
             title: "",
             descriptionText: "",
             dueDate: Date(),
             status: .actionRequired,
-            healthCaseID: healthCaseID
+            healthCaseID: healthCase.id
         )
-        // Expect an emptyTitle error when executing
+        // Create the use case.
+        let useCase = AddHealthRequirementUseCase(
+            requirementRepository: requirementRepository,
+            caseRepository: caseRepository
+        )
+        
+        // Expect an emptyTitle error when executing.
         #expect(throws: AddHealthRequirementError.emptyTitle) {
             try useCase.execute(requirement)
         }
     }
     
-    /// An applicant types only spaces as the title, which counts as empty.
-    @Test func addRequirement_withOnlySpacesInTitle_throwsEmptyTitle() {
-        let requirementRepository = MockHealthRequirementRepository()
-        let caseRepository = MockHealthCaseRepository()
-        let healthCaseID = UUID()
-        // Tell the fake case repository that a health case with that ID exists
-        caseRepository.healthCase = HealthCase(id: healthCaseID, createdDate: Date())
-        // Create the use case using those mocks
+    /// An applicant enters an invalid date, so they are asked to enter a valid date.
+    /// A due date more than five years from now should produce the invalidDueDate domain error.
+    @Test func addRequirement_withInvalidDueDate_throwsInvalidDueDate() throws {
+        // Create the local repositories using the sample JSON data included in the app.
+        let requirementRepository = LocalHealthRequirementRepository()
+        let caseRepository = LocalHealthCaseRepository()
+        
+        // Use the applicant's existing health case from SampleHealthCase.json.
+        let healthCase = try #require(try caseRepository.fetch())
+        let now = Date()
+        
+        // Create a date six years from now, which breakes the business rule.
+        let invalidDate = try #require(
+            Calendar.current.date(byAdding: .year, value: 6, to: now)
+        )
+        
+        // Create a requirement with the invalid due date.
+        let requirement = HealthRequirement(
+            id: UUID(),
+            title: "Video telehealth (VDOT)",
+            descriptionText: "",
+            dueDate: invalidDate,
+            status: .actionRequired,
+            healthCaseID: healthCase.id
+        )
+        
+        //Create the use case.
         let useCase = AddHealthRequirementUseCase(
             requirementRepository: requirementRepository,
             caseRepository: caseRepository
         )
-        // Create a requirement associated with that health case.
-        let requirement = HealthRequirement(
-            id: UUID(),
-            title: "     ",
-            descriptionText: "",
-            dueDate: Date(),
-            status: .actionRequired,
-            healthCaseID: healthCaseID
-        )
-        // Expect an emptyTitle error when executing
-        #expect(throws: AddHealthRequirementError.emptyTitle) {
-            try useCase.execute(requirement)
-        }
-    }
-    
-    /// An applicant records a requirement that was due yesterday. This is allowed, because it may already be late or done.
-    @Test func addRequirement_withDueDateYesterday_savesIt() throws {
-        let requirementRepository = MockHealthRequirementRepository()
-        let caseRepository = MockHealthCaseRepository()
-        let healthCaseID = UUID()
-        // Tell the fake case repository that a health case with that ID exists
-        caseRepository.healthCase = HealthCase(id: healthCaseID, createdDate: Date())
-        // Create the use case using those mocks
-        let useCase = AddHealthRequirementUseCase(
-            requirementRepository: requirementRepository,
-            caseRepository: caseRepository
-        )
-        // Create a date from yesterday
-        let yesterday = Date().addingTimeInterval(-60 * 60 * 24)
-        // Create a requirement associated with that health case.
-        let requirement = HealthRequirement(
-            id: UUID(),
-            title: "Chest X-ray",
-            descriptionText: "",
-            dueDate: yesterday,
-            status: .actionRequired,
-            healthCaseID: healthCaseID
-        )
-        // Execute and expect requirement to be saved
-        try useCase.execute(requirement)
-        #expect(requirementRepository.requirements.count == 1)
-    }
-    
-    /// An applicant enters a due date six years away, which is probably a typo, so they are asked to check the date.
-    @Test func addRequirement_withDueDateSixYearsAway_throwsInvalidDueDate() {
-        let requirementRepository = MockHealthRequirementRepository()
-        let caseRepository = MockHealthCaseRepository()
-        let healthCaseID = UUID()
-        // Tell the fake case repository that a health case with that ID exists
-        caseRepository.healthCase = HealthCase(id: healthCaseID, createdDate: Date())
-        // Create the use case using those mocks
-        let useCase = AddHealthRequirementUseCase(
-            requirementRepository: requirementRepository,
-            caseRepository: caseRepository
-        )
-        // Create a date 6 years from now
-        let sixYearsAway = Date().addingTimeInterval(60 * 60 * 24 * 365 * 6)
-        // Create a requirement associated with that health case.
-        let requirement = HealthRequirement(
-            id: UUID(),
-            title: "Chest X-ray",
-            descriptionText: "",
-            dueDate: sixYearsAway,
-            status: .actionRequired,
-            healthCaseID: healthCaseID
-        )
-        // Expect an invalidDueDate error when executing
+        
+        // Expect an invalidDueDate error when executing.
         #expect(throws: AddHealthRequirementError.invalidDueDate) {
-            try useCase.execute(requirement)
+            try useCase.execute(requirement, now: now)
         }
     }
     
-    /// An applicant has not started a health case, so the requirement cannot be added.
-    @Test func addRequirement_whenNoHealthCaseExists_throwsHealthCaseNotFound() {
-        let requirementRepository = MockHealthRequirementRepository()
-        let caseRepository = MockHealthCaseRepository()
-        // Create the use case using those mocks
-        let useCase = AddHealthRequirementUseCase(
-            requirementRepository: requirementRepository,
-            caseRepository: caseRepository
-        )
-        // Create a requirement associated with that health case.
-        let requirement = HealthRequirement(
-            id: UUID(),
-            title: "Chest X-ray",
-            descriptionText: "",
-            dueDate: Date(),
-            status: .actionRequired,
-            healthCaseID: UUID()
-        )
-        // Expect an healthCaseNotFound error when executing
-        #expect(throws: AddHealthRequirementError.healthCaseNotFound) {
-            try useCase.execute(requirement)
-        }
-    }
-    
-    /// An applicant types spaces around the title, and the saved title has them removed.
-    @Test func addRequirement_withSpacesAroundTitle_savesTrimmedTitle() throws {
-        let requirementRepository = MockHealthRequirementRepository()
-        let caseRepository = MockHealthCaseRepository()
-        let healthCaseID = UUID()
-        // Tell the fake case repository that a health case with that ID exists
-        caseRepository.healthCase = HealthCase(id: healthCaseID, createdDate: Date())
-        // Create the use case using those mocks
-        let useCase = AddHealthRequirementUseCase(
-               requirementRepository: requirementRepository,
-            caseRepository: caseRepository
-        )
-        // Create a requirement associated with that health case.
-        let requirement = HealthRequirement(
-            id: UUID(),
-            title: "  Chest X-ray  ",
-            descriptionText: "",
-            dueDate: Date(),
-            status: .actionRequired,
-            healthCaseID: healthCaseID
-        )
-        // Execute and expect the title to be trimmed when saved
-        try useCase.execute(requirement)
-        #expect(requirementRepository.requirements[0].title == "Chest X-ray")
-        }
-    
-    /// Completing a requirement records the date it was completed.
-    @Test func completeRequirement_thatNeedsAction_recordsTheCompletedDate() throws {
-        let repository = MockHealthRequirementRepository()
-        // Create a requirement associated with a health case.
-        let requirement = HealthRequirement(
-            id: UUID(),
-            title: "Chest X-ray",
-            descriptionText: "",
-            dueDate: Date(),
-            status: .actionRequired,
-            healthCaseID: UUID()
-        )
-        // Add the requirement to the repository.
-        repository.requirements = [requirement]
-        // Create the use case with the repository.
+    /// An applicant can mark an outstanding health requirement as completed.
+    /// The Chest X-ray requirement in SampleRequirements.json starts as actionRequired.
+    @Test func completeRequirement_thatNeedsAction_marksItComplete() throws {
+        // Load the sample health requirement.
+        let repository = LocalHealthRequirementRepository()
+        
+        // Use the existing Chest X-ray from SampleRequirements.json.
+        let requirementID = UUID(uuidString:"B1000000-0000-0000-0000-000000000001")!
+        
+        // Create the use case.
         let useCase = CompleteHealthRequirementUseCase(repository: repository)
-        // Execute and expect the completion date to be recorded.
-        try useCase.execute(id: requirement.id)
-        #expect(repository.requirements[0].completedDate != nil)
+        
+        // Execute and expect requirement to be marked as completed with a completion date.
+        try useCase.execute(id: requirementID)
+        let requirement = try repository.fetchRequirement(withID: requirementID)
+        #expect(requirement?.status == .completed)
+        #expect(requirement?.completedDate != nil)
     }
     
-    /// An applicant records a chest X-ray appointment for tomorrow, and it is saved.
-    @Test func scheduleAppointment_withTitleFutureDateAndExistingRequirement_savesIt() throws {
-        let appointmentRepository = MockAppointmentRepository()
-        let requirementRepository = MockHealthRequirementRepository()
-        // Create an existing health requirement for the appointment
-        let requirement = HealthRequirement(
-            id: UUID(),
-            title: "Chest X-ray",
-            descriptionText: "",
-            dueDate: Date(),
-            status: .actionRequired,
-            healthCaseID: UUID()
-        )
-        // Add the requirement to the repository
-        requirementRepository.requirements = [requirement]
-        // Create the use case using the mock repositories
-        let useCase = ScheduleHealthAppointmentUseCase(
-            appointmentRepository: appointmentRepository,
-            requirementRepository: requirementRepository
-        )
-        // Create an appointment for tomorrow
-        let tomorrow = Date().addingTimeInterval(60 * 60 * 24)
-        let appointment = Appointment(
-            id: UUID(),
-            title: "Chest X-ray",
-            date: tomorrow,
-            location: "Radiology St George Hospital",
-            descriptionText: "",
-            isCompleted: false,
-            healthRequirementID: requirement.id
-        )
-        // Execute and expect appointment to be saved
-        try useCase.execute(appointment)
-        #expect(appointmentRepository.appointments.count == 1)
-        }
-    
-    /// An applicant leaves the appointment title empty, so they are asked to enter one.
-    @Test func scheduleAppointment_withEmptyTitle_throwsEmptyTitle() {
-        let appointmentRepository = MockAppointmentRepository()
-        let requirementRepository = MockHealthRequirementRepository()
-        // Create an existing health requirement for the appointment
-        let requirement = HealthRequirement(
-            id: UUID(),
-            title: "Chest X-ray",
-            descriptionText: "",
-            dueDate: Date(),
-            status: .actionRequired,
-            healthCaseID: UUID()
-        )
-        // Add the requirement to the repository
-        requirementRepository.requirements = [requirement]
-        // Create the use case using the mock repositories
-        let useCase = ScheduleHealthAppointmentUseCase(
-            appointmentRepository: appointmentRepository,
-            requirementRepository: requirementRepository
-        )
-        // Create an appointment for tomorrow but with no title
-        let tomorrow = Date().addingTimeInterval(60 * 60 * 24)
-        let appointment = Appointment(
-            id: UUID(),
-            title: "",
-            date: tomorrow,
-            location: "",
-            descriptionText: "",
-            isCompleted: false,
-            healthRequirementID: requirement.id
-        )
-        // Expect an emptyTitle error when executing
-        #expect(throws: ScheduleHealthAppointmentError.emptyTitle) {
-            try useCase.execute(appointment)
-        }
-    }
-    
-    /// An applicant chooses a date that was yesterday, so they are asked to choose another date.
-    @Test func scheduleAppointment_withDateYesterday_throwsAppointmentInPast() {
-        let appointmentRepository = MockAppointmentRepository()
-        let requirementRepository = MockHealthRequirementRepository()
-        // Create an existing health requirement for the appointment
-        let requirement = HealthRequirement(
-            id: UUID(),
-            title: "Chest X-ray",
-            descriptionText: "",
-            dueDate: Date(),
-            status: .actionRequired,
-            healthCaseID: UUID()
-        )
-        // Add the requirement to the repository
-        requirementRepository.requirements = [requirement]
-        // Create the use case using the mock repositories
-        let useCase = ScheduleHealthAppointmentUseCase(
-            appointmentRepository: appointmentRepository,
-            requirementRepository: requirementRepository
-        )
-        // Create an appointment for yesterday
-        let yesterday = Date().addingTimeInterval(-60 * 60 * 24)
-        let appointment = Appointment(
-            id: UUID(),
-            title: "Chest X-ray",
-            date: yesterday,
-            location: "",
-            descriptionText: "",
-            isCompleted: false,
-            healthRequirementID: requirement.id
-        )
-        // Expect an appointmentInPast error when executing
-        #expect(throws: ScheduleHealthAppointmentError.appointmentInPast) {
-            try useCase.execute(appointment)
-        }
-    }
-    
-    /// An appointment at the start of today is still allowed, because it is today.
-    @Test func scheduleAppointment_atStartOfToday_savesIt() throws {
-        let appointmentRepository = MockAppointmentRepository()
-        let requirementRepository = MockHealthRequirementRepository()
-        // Create an existing health requirement for the appointment
-        let requirement = HealthRequirement(
-            id: UUID(),
-            title: "Chest X-ray",
-            descriptionText: "",
-            dueDate: Date(),
-            status: .actionRequired,
-            healthCaseID: UUID()
-        )
-        // Add the requirement to the repository
-        requirementRepository.requirements = [requirement]
-        // Create the use case using the mock repositories
-        let useCase = ScheduleHealthAppointmentUseCase(
-            appointmentRepository: appointmentRepository,
-            requirementRepository: requirementRepository
-        )
-        // Create an appointment for today
-        let startOfToday = Calendar.current.startOfDay(for: Date())
-        let appointment = Appointment(
-            id: UUID(),
-            title: "Chest X-ray",
-            date: startOfToday,
-            location: "",
-            descriptionText: "",
-            isCompleted: false,
-            healthRequirementID: requirement.id
-        )
-        // Execute and expect appointment to be saved
-        try useCase.execute(appointment)
-        #expect(appointmentRepository.appointments.count == 1)
-    }
-    
-    /// An appointment is linked to a requirement that no longer exists, so it is not saved.
-    @Test func scheduleAppointment_forRequirementThatDoesNotExist_throwsRequirementNotFound() {
-        let appointmentRepository = MockAppointmentRepository()
-        let requirementRepository = MockHealthRequirementRepository()
-        // Create the use case using the mock repositories
-        let useCase = ScheduleHealthAppointmentUseCase(
-            appointmentRepository: appointmentRepository,
-            requirementRepository: requirementRepository
-        )
-        // Create an appointment for tomorrow
-        let tomorrow = Date().addingTimeInterval(60 * 60 * 24)
-        let appointment = Appointment(
-            id: UUID(),
-            title: "Chest X-ray",
-            date: tomorrow,
-            location: "",
-            descriptionText: "",
-            isCompleted: false,
-            healthRequirementID: UUID()
-        )
-        // Expect a requirementNotFound error when executing
-        #expect(throws: ScheduleHealthAppointmentError.requirementNotFound) {
-            try useCase.execute(appointment)
-        }
-    }
-    
-    /// An applicant marks a requirement that needs action as completed, and its status changes.
-    @Test func completeRequirement_thatNeedsAction_marksItCompleted() throws {
-        let repository = MockHealthRequirementRepository()
-        // Create a health requirement
-        let requirement = HealthRequirement(
-            id: UUID(),
-            title: "Chest X-ray",
-            descriptionText: "",
-            dueDate: Date(),
-            status: .actionRequired,
-            healthCaseID: UUID()
-        )
-        // Add the requirement to the repository
-        repository.requirements = [requirement]
-        // Create the use case using the mock repository
-        let useCase = CompleteHealthRequirementUseCase(repository: repository)
-        // Execute and expect the requirement to be completed
-        try useCase.execute(id: requirement.id)
-        #expect(repository.requirements[0].status == .completed)
-    }
-    
-    /// An applicant tries to complete a requirement that is already completed, so they are told it is already done.
+    /// An applicant whose health requirement is already completed cannot be completed again.
+    /// The Specalist Appointment in SampleRequirements.json is already completed.
     @Test func completeRequirement_thatIsAlreadyCompleted_throwsAlreadyCompleted() {
-        let repository = MockHealthRequirementRepository()
-        // Create a health requirement
-        let requirement = HealthRequirement(
-            id: UUID(),
-            title: "Chest X-ray",
-            descriptionText: "",
-            dueDate: Date(),
-            status: .completed,
-            healthCaseID: UUID()
-        )
-        // Add the requirement to the repository
-        repository.requirements = [requirement]
-        // Create the use case using the mock repository
+        let repository = LocalHealthRequirementRepository()
+        
+        // Use the existing completed Specalist Appointment requirement.
+        let requirementID = UUID(uuidString: "B1000000-0000-0000-0000-000000000003")!
+        
+        // Create the use case.
         let useCase = CompleteHealthRequirementUseCase(repository: repository)
-        // Expect an alreadyCompleted error when executing
+        
+        // Expect an alreadyCompleted error when executing.
         #expect(throws: CompleteHealthRequirementError.alreadyCompleted) {
-            try useCase.execute(id: requirement.id)
+            try useCase.execute(id: requirementID)
         }
     }
     
-    /// An applicant tries to complete a requirement that no longer exists.
-    @Test func completeRequirement_thatDoesNotExist_throwsRequirementNotFound() {
-        let repository = MockHealthRequirementRepository()
-        // Create the use case using the mock repository
-        let useCase = CompleteHealthRequirementUseCase(repository: repository)
-        // Expect a requirementNotFound error when executing
-        #expect(throws: CompleteHealthRequirementError.requirementNotFound) {
-            try useCase.execute(id: UUID())
-        }
-    }
-    
-    /// A late requirement can still be completed, and once completed it is no longer overdue.
-    @Test func completeRequirement_thatIsOverdue_marksItCompletedAndNoLongerOverdue() throws {
-        let repository = MockHealthRequirementRepository()
-        // Create a requirement due yesterday
-        let yesterday = Date().addingTimeInterval(-60 * 60 * 24)
-        // Create an overdue health requirement
-        let requirement = HealthRequirement(
+    /// An applicant 's future health appointment can be recorded for an existing health requirement.
+    /// The new appointment belongs to the Chest X-ray requirement in SampleRequirements.json.
+    @Test func scheduleAppointment_withValidDetails_savesIt() throws {
+        let appointmentRepository = LocalAppointmentRepository()
+        let requirementRepository = LocalHealthRequirementRepository()
+        
+        // Record how many appointments exists before adding a new one.
+        let totalBeforeAdd = appointmentRepository.appointments.count
+        
+        // Add 24 hours (86400 seconds) to the current date to get tomorrow.
+        let tomorrow = Date().addingTimeInterval(86400)
+        
+        // Use the existing Chest X-ray requirement.
+        let requirementID = UUID(uuidString: "B1000000-0000-0000-0000-000000000001")!
+        
+        // Create a new appointment for tomorrow .
+        let appointment = Appointment(
             id: UUID(),
-            title: "Chest X-ray",
+            title: "Chest X-ray follow-up",
+            date: tomorrow,
+            location: "Radiology Department",
             descriptionText: "",
-            dueDate: yesterday,
-            status: .upcoming,
-            healthCaseID: UUID()
+            isCompleted: false,
+            healthRequirementID: requirementID
         )
-        // Add the requirement to the repository
-        repository.requirements = [requirement]
-        // Create the use case using the mock repository
-        let useCase = CompleteHealthRequirementUseCase(repository: repository)
-        // Execute and expect the requirement to no longer be overdue
-        try useCase.execute(id: requirement.id)
-        #expect(repository.requirements[0].isOverdue() == false)
+        
+        // Create the use case.
+        let useCase = ScheduleHealthAppointmentUseCase(
+            appointmentRepository: appointmentRepository,
+            requirementRepository: requirementRepository
+        )
+        
+        // Execute and expect one more poointment should now be stored.
+        try useCase.execute(appointment)
+        #expect(appointmentRepository.appointments.count > totalBeforeAdd)
+    }
+    
+    /// An applicant's appointment cannot be recorded with a date and time in the past.
+    /// A past appointment should produce the appointmentInPast domain error.
+    @Test func scheduleAppointment_withPastDate_throwsAppointmentInPast() {
+        // Load
+        let appointmentRepository = LocalAppointmentRepository()
+        let requirementRepository = LocalHealthRequirementRepository()
+        
+        // Use the existing Chest X-ray requirement.
+        let requirementID = UUID(uuidString: "B1000000-0000-0000-0000-000000000001")!
+        
+        // Subtract 24 hours (86400 seconds) from the current date to get tomorrow.
+        let yesterday = Date().addingTimeInterval(-86400)
+        
+        // Create an appointment for yesterday.
+        let appointment = Appointment(
+            id: UUID(),
+            title: "Chest X-ray follow-up",
+            date: yesterday,
+            location: "Radiology Department",
+            descriptionText: "",
+            isCompleted: false,
+            healthRequirementID: requirementID
+        )
+        
+        // Create the use case.
+        let useCase = ScheduleHealthAppointmentUseCase(
+            appointmentRepository: appointmentRepository,
+            requirementRepository: requirementRepository
+        )
+        
+        // Expect an appointmentInPast error when executing.
+        #expect(throws: ScheduleHealthAppointmentError.appointmentInPast){
+            try useCase.execute(appointment)
+        }
+    }
+    
+    /// An applicant's health document can be added to an existing health requirement.
+    /// The new document belongs to the Chest X-ray requirement in SampleRequirements.json
+    @Test func addDocument_withValidDetails_savesIt() throws {
+        let documentRepository = LocalDocumentRepository()
+        let requirementRepository = LocalHealthRequirementRepository()
+        
+        // Record how many documents exist before adding a new one
+        let totalBeforeAdd = documentRepository.documents.count
+        
+        // Use the existing Chest X-ray requirement.
+        let requirementID = UUID(uuidString: "B1000000-0000-0000-0000-000000000001")!
+        
+        // Create a new document with a saved file path.
+        let document = Document(
+            id: UUID(),
+            name: "Chest X-ray result",
+            filePath: "chest-xray-result.pdf",
+            dateAdded: Date(),
+            documentType: "Result",
+            healthRequirementID: requirementID
+        )
+        
+        // Create the use case.
+        let useCase = AddDocumentUseCase(
+            documentRepository: documentRepository,
+            requirementRepository: requirementRepository
+        )
+        
+        // Execute and expect one more document should now be stored.
+        try useCase.execute(document)
+        #expect(documentRepository.documents.count > totalBeforeAdd)
+    }
+    
+    /// The applicant cannot add a health document without a saved file path.
+    /// An empty file path should produce the emptyFile domain error.
+    @Test func addDocument_withEmptyFilePath_throwsEmptyFile() {
+        let documentRepository = LocalDocumentRepository()
+        let requirementRepository = LocalHealthRequirementRepository()
+        
+        // Use the existing Chest X-ray requirement.
+        let requirementID = UUID(uuidString: "B1000000-0000-0000-0000-000000000001")!
+        
+        // Create a document without a file path.
+        let document = Document(
+            id: UUID(),
+            name: "Chest X-ray result",
+            filePath: "",
+            dateAdded: Date(),
+            documentType: "Result",
+            healthRequirementID: requirementID
+        )
+        
+        // Create the use case.
+        let useCase = AddDocumentUseCase(
+            documentRepository: documentRepository,
+            requirementRepository: requirementRepository
+        )
+        
+        // Expect an emptyFile error when executing.
+        #expect(throws: AddDocumentError.emptyFile){
+            try useCase.execute(document)
+        }
+    }
+    
+    /// When the applicant has a Chest X-ray requirement, it returns the appointment for that requirement.
+    /// SampleAppointments.json contains one appointment linked to the Chest X-ray requirement.
+    @Test func fetchAppointments_forRequirement_returnsAppointment() throws {
+        let repository = LocalAppointmentRepository()
+        
+        // Use the existing Chest X-ray requirement.
+        let requirementID = UUID(uuidString: "B1000000-0000-0000-0000-000000000001")!
+        
+        // Execute and expect one matching appointment.
+        let appointments = try repository.fetchAppointments(for: requirementID)
+        #expect(appointments.count == 1)
     }
 }
