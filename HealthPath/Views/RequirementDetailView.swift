@@ -54,8 +54,13 @@ struct RequirementDetailView: View {
 
             Section {
                 if viewModel.appointments.isEmpty {
-                    Text("No appointments yet. Add the date of your appointment for this requirement.")
-                        .foregroundStyle(.secondary)
+                    if viewModel.requirement.status == .completed {
+                        Text("This requirement is completed. You can't add new appointments.")
+                            .foregroundStyle(.secondary)
+                    } else {
+                        Text ("No appointments yet. Add the date of your appointment for this requirement.")
+                            .foregroundStyle(.secondary)
+                    }
                 } else {
                     ForEach(viewModel.appointments) { appointment in
                         VStack(alignment: .leading, spacing: 4) {
@@ -64,6 +69,12 @@ struct RequirementDetailView: View {
 
                             Text(appointment.date.formatted(date: .abbreviated, time: .shortened))
                                 .font(.subheadline)
+                            
+                            if appointment.date < Date() {
+                                Text("Past")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
 
                             if !appointment.location.isEmpty {
                                 Text(appointment.location)
@@ -75,11 +86,13 @@ struct RequirementDetailView: View {
                         .accessibilityElement(children: .combine)
                     }
                 }
-
-                Button {
-                    showingAddAppointment = true
-                } label: {
-                    Label("Add Appointment", systemImage: "plus.circle.fill")
+                
+                if viewModel.requirement.status != .completed {
+                    Button {
+                        showingAddAppointment = true
+                    } label: {
+                        Label("Add Appointment", systemImage: "plus.circle.fill")
+                    }
                 }
             } header: {
                 Text("Appointments")

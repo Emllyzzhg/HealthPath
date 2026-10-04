@@ -38,7 +38,9 @@ struct HomeView: View {
                         ContentUnavailableView(
                             "No Requirements Yet",
                             systemImage: "checklist",
-                            description: Text("Open the Requirements tab and tap + to add the first thing you need to do.")
+                            description: Text(
+                                "Open the Requirements tab and tap + to add the first thing you need to do."
+                            )
                         )
                     }
                 } else {
@@ -120,30 +122,32 @@ struct HomeView: View {
                     VStack(alignment: .leading, spacing: 6) {
                         Text(requirement.title)
                             .font(.headline)
-
+                        
                         if !requirement.descriptionText.isEmpty {
                             Text(requirement.descriptionText)
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                         }
-
                         Text("Due \(requirement.dueDate.formatted(date: .abbreviated, time: .omitted))")
                             .font(.subheadline)
-
                         RequirementStatusBadge(requirement: requirement)
                     }
                     .padding(.vertical, 4)
                     .accessibilityElement(children: .combine)
                 }
             } else {
-                Label("You've completed everything on your list.", systemImage: "checkmark.circle.fill")
+                Label("You've completed everything on your list.",systemImage: "checkmark.circle.fill")
                     .foregroundStyle(.green)
             }
         } header: {
-            Text("Next action")
+            if let requirement = viewModel.nextAction {
+                Text(requirement.isOverdue() ? "Overdue requirement" : "Next requirement")
+            } else {
+                Text("Next requirement")
+            }
         }
     }
-
+    
     private var upcomingAppointmentSection: some View {
         Section {
             if let appointment = viewModel.upcomingAppointment {

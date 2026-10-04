@@ -15,6 +15,7 @@ import Foundation
 /// 1. An appointment must have a title, such as "Chest X-ray".
 /// 2. An appointment date and time cannot be in the past. Someone who attended before installing the app would instead add the requirement as completed and attach the documents.
 /// 3. An appointment must belong to a health requirement that exists.
+/// 4. A completed appointment cannot have a new appointment added.
 ///
 /// The appointment is saved only after all three rules pass, through AppointmentRepository. This use case never talks to the database directly.
 /// When a rule is broken, the screen shows the error's message and nothing is saved.
@@ -29,7 +30,7 @@ struct ScheduleHealthAppointmentUseCase {
     }
 
     /// Records the appointment for its health requirement.
-    /// - Throws: ScheduleHealthAppointmentError/emptyTitle if the title is empty, ScheduleHealthAppointmentError/appointmentInPast if the date has already passed, or ScheduleHealthAppointmentError/requirementNotFound if the requirement does not exist.
+    /// - Throws: ScheduleHealthAppointmentError/emptyTitle if the title is empty, ScheduleHealthAppointmentError/appointmentInPast if the date has already passed, ScheduleHealthAppointmentError/requirementNotFound if the requirement does not exist, or ScheduleHealthAppointmentError.requirementCompleted if the requirement is complete.
     func execute(_ appointment: Appointment, now: Date = Date()) throws {
         // Rule 1: a title is required.
         let trimmedTitle = appointment.title.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -43,11 +44,17 @@ struct ScheduleHealthAppointmentUseCase {
         }
 
         // Rule 3: the health requirement must exist.
-        let requirement = try requirementRepository.fetchRequirement(withID: appointment.healthRequirementID)
-        if requirement == nil {
+        guard let requirement = try requirementRepository.fetchRequirement(
+            withID: appointment.healthRequirementID)
+        else {
             throw ScheduleHealthAppointmentError.requirementNotFound
         }
-
+        
+        // Rule 4: a completed requirement cannot have a new appointment.
+        if requirement.status == .completed {
+            throw ScheduleHealthAppointmentError.requirementCompleted
+        }
+        
         // All rules passed, so save the appointment with the spaces removed from its title.
         var cleanedAppointment = appointment
         cleanedAppointment.title = trimmedTitle

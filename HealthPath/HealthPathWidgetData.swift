@@ -64,21 +64,17 @@ struct HealthPathWidgetData {
         let sharedDefaults = UserDefaults(
             suiteName: appGroup
         )
- 
-        guard
-            let requirementIDString = sharedDefaults?.string(
-                forKey: "nextRequirementID"
-            ),
-            let requirementID = UUID(
-                uuidString: requirementIDString
-            )
-        else {
-            return
-        }
- 
+        
+        /// If there is a future appointment, show the next upcoming appointment.
+        /// If there is no future appointment, show the next requirement and "No upcoming appointment."
+        // Find the next future appointment all health requirement.
+        let now = Date()
+        
         let nextAppointment = appointments
-            .filter {
-                $0.healthRequirementID == requirementID && !$0.isCompleted
+            .filter { appointment in
+                let isNotCompleted = !appointment.isCompleted
+                let isInFuture = appointment.date >= now
+                return isNotCompleted && isInFuture
             }
             .sorted { $0.date < $1.date }
             .first
@@ -102,7 +98,6 @@ struct HealthPathWidgetData {
                 forKey: "nextAppointmentDate"
             )
         }
- 
         WidgetCenter.shared.reloadAllTimelines()
     }
 }

@@ -42,7 +42,7 @@ struct HealthPathProvider: TimelineProvider {
         )
         completion(entry)
     }
-    
+ 
     func getTimeline(
         in context: Context,
         completion: @escaping (Timeline<HealthPathEntry>) -> Void
@@ -53,12 +53,15 @@ struct HealthPathProvider: TimelineProvider {
         let requirementTitle = sharedDefaults?.string(
             forKey: "nextRequirementTitle"
         ) ?? "No upcoming requirements"
+        
         let dueDate = sharedDefaults?.object(
             forKey: "nextRequirementDueDate"
         ) as? Date
+        
         let appointmentTitle = sharedDefaults?.string(
             forKey: "nextAppointmentTitle"
         )
+        
         let appointmentDate = sharedDefaults?.object(
             forKey: "nextAppointmentDate"
         ) as? Date
@@ -70,7 +73,7 @@ struct HealthPathProvider: TimelineProvider {
             appointmentTitle: appointmentTitle,
             appointmentDate: appointmentDate
         )
-        
+ 
         let timeline = Timeline(
             entries: [entry],
             policy: .never
@@ -82,24 +85,34 @@ struct HealthPathProvider: TimelineProvider {
 /// Displays HealthPath information based on the widget size.
 struct HealthPathWidgetView: View {
     var entry: HealthPathEntry
-    
     @Environment(\.widgetFamily) private var family
-    
     var body: some View {
         if family == .systemSmall {
             VStack(alignment: .leading, spacing: 8) {
                 Image(systemName: "heart.text.clipboard")
-                Text("Next Requirement")
-                    .font(.caption)
-                Text(entry.requirementTitle)
-                    .font(.headline)
-                if let appointmentDate = entry.appointmentDate {
-                    Text("Appointment")
+                
+                if let appointmentTitle = entry.appointmentTitle,
+                   let appointmentDate = entry.appointmentDate {
+                    Text("Upcoming Appointment")
                         .font(.caption)
+                    Text(appointmentTitle)
+                        .font(.headline)
                     Text(appointmentDate, style: .date)
                         .font(.caption)
                     Text(appointmentDate, style: .time)
                         .font(.caption)
+                } else {
+                    Text("Next Requirement")
+                        .font(.caption)
+                    Text(entry.requirementTitle)
+                        .font(.headline)
+                    if let dueDate = entry.dueDate {
+                        Text("Due \(dueDate, style: .date)")
+                            .font(.caption)
+                    }
+                    Text("No upcoming appointment")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
                 Spacer()
             }
@@ -110,25 +123,34 @@ struct HealthPathWidgetView: View {
             )
         } else if family == .systemMedium {
             VStack(alignment: .leading, spacing: 8) {
-                Label(
-                    "Next Health Requirement",
-                    systemImage: "heart.text.clipboard"
-                )
-                .font(.headline)
-                Text(entry.requirementTitle)
-                    .font(.title3)
-                if let appointmentDate = entry.appointmentDate {
-                    Text("Appointment: \(appointmentDate, style: .date)")
+                if let appointmentTitle = entry.appointmentTitle,
+                   let appointmentDate = entry.appointmentDate {
+                    Label(
+                        "Upcoming Appointment",
+                        systemImage: "calendar"
+                    )
+                    .font(.headline)
+                    Text(appointmentTitle)
+                        .font(.title3)
+                    Text(appointmentDate, style: .date)
                         .font(.subheadline)
                     Text(appointmentDate, style: .time)
                         .font(.subheadline)
                 } else {
-                    Text("No appointment scheduled")
+                    Label(
+                        "Next Health Requirement",
+                        systemImage: "heart.text.clipboard"
+                    )
+                    .font(.headline)
+                    Text(entry.requirementTitle)
+                        .font(.title3)
+                    Text("No upcoming appointment")
                         .font(.subheadline)
-                }
-                if let dueDate = entry.dueDate {
-                    Text("Due Date: \(dueDate, style: .date)")
-                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    if let dueDate = entry.dueDate {
+                        Text("Due Date: \(dueDate, style: .date)")
+                            .font(.caption)
+                    }
                 }
                 Spacer()
             }
@@ -142,7 +164,7 @@ struct HealthPathWidgetView: View {
         }
     }
 }
- 
+
 /// The HealthPath home-screen widget.
 struct HealthPathWidget: Widget {
     let kind: String = "HealthPathWidget"
@@ -177,6 +199,7 @@ struct HealthPathWidget: Widget {
         appointmentDate: .now
     )
 }
+ 
 #Preview("HealthPath - Medium", as: .systemMedium) {
     HealthPathWidget()
 } timeline: {

@@ -223,6 +223,45 @@ struct HealthPathTests {
         }
     }
     
+    ///An applicant cannot add a new appointment to a completed health requirement.
+    @Test func scheduleAppointment_forCompletedRequirement_throwsRequirementCompleted() throws {
+        let appointmentRepository = LocalAppointmentRepository()
+        let requirementRepository = LocalHealthRequirementRepository()
+        
+        // Use an existing completed requirement from the sample data
+        let completedRequirement = try #require(
+            try requirementRepository.fetchAll().first {
+            $0.status == .completed
+            }
+        )
+        
+        // Use a fixed current time and create an appointment one hour later.
+        let now = Date()
+        
+        // Add 1 hour to the current time.
+        let oneHourFromNow = now.addingTimeInterval(3600)
+        
+        // Create an appointment 1 hour from now.
+        let appointment = Appointment(
+            id: UUID(),
+            title: "Follow-up appointment",
+            date: oneHourFromNow,
+            location: "St George Chest Clinic",
+            descriptionText: "",
+            isCompleted: false,
+            healthRequirementID: completedRequirement.id
+        )
+        // Create the use case.
+        let useCase = ScheduleHealthAppointmentUseCase(
+            appointmentRepository: appointmentRepository,
+            requirementRepository: requirementRepository
+        )
+        // Expect a requirementCompleted error when executing.
+        #expect(throws: ScheduleHealthAppointmentError.requirementCompleted) {
+            try useCase.execute(appointment, now: now)
+        }
+    }
+    
     /// An applicant's health document can be added to an existing health requirement.
     /// The new document belongs to the Chest X-ray requirement in SampleRequirements.json
     @Test func addDocument_withValidDetails_savesIt() throws {

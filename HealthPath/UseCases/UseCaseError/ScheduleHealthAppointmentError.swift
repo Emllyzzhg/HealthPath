@@ -17,6 +17,8 @@ enum ScheduleHealthAppointmentError: LocalizedError, Equatable {
     case appointmentInPast
     /// The health requirement this appointment belongs to could not be found. Go back to your requirements, choose one, and try again.
     case requirementNotFound
+    /// The health requirement is already completed, so no new appointments can be added
+    case requirementCompleted
 
     var errorDescription: String? {
         switch self {
@@ -26,6 +28,8 @@ enum ScheduleHealthAppointmentError: LocalizedError, Equatable {
             return "This appointment date or time has already passed. Choose a later date or time, or check the details on your appointment letter."
         case .requirementNotFound:
             return "We couldn't find the health requirement for this appointment. Go back to your requirements, choose one, and try again."
+        case .requirementCompleted:
+            return "This health requirement is already completed. You can't add a new appointment to it."
         }
     }
 }
