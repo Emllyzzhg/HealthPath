@@ -24,7 +24,7 @@ struct DocumentStorageService {
         }
     }
     
-    func savePDF(_ data: Data, fileName: String) throws -> String {
+    func savePDF(_ data: Data) throws -> String {
         guard !data.isEmpty else {
             throw Error.emptyDocument
         }
@@ -32,9 +32,11 @@ struct DocumentStorageService {
             for: .documentDirectory,
             in: .userDomainMask
         )[0]
+        
+        let fileName = UUID().uuidString + ".pdf"
+        
         let fileURL = documentsDirectory
             .appendingPathComponent(fileName)
-            .appendingPathExtension("pdf")
         do {
             try data.write(to: fileURL)
             return fileURL.path
@@ -43,4 +45,3 @@ struct DocumentStorageService {
         }
     }
 }
- 

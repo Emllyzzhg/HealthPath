@@ -12,6 +12,9 @@ struct DocumentsView: View {
     
     @StateObject private var viewModel: DocumentViewModel
     @State private var showingAddDocument = false
+    @State private var sharedDocumentPath: String?
+    @State private var sharedDocumentName: String?
+    @State private var requirements: [HealthRequirement] = []
     private let requirementRepository: any HealthRequirementRepository
     
     init(viewModel: DocumentViewModel,
@@ -35,17 +38,24 @@ struct DocumentsView: View {
                 } else {
                     List {
                         ForEach(viewModel.documents) { document in
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(document.name)
-                                    .font(.headline)
- 
-                                Text(document.documentType)
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
- 
-                                Text(document.dateAdded, style: .date)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
+                            NavigationLink {
+                                DocumentDetailView(document: document)
+                            } label: {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(document.name)
+                                        .font(.headline)
+                                    
+                                    Text(requirementName(for: document))
+                                        .font(.subheadline)
+                                    
+                                    Text(document.documentType)
+                                        .font(.subheadline)
+                                        .foregroundStyle(.secondary)
+                                    
+                                    Text(document.dateAdded, style: .date)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
                             }
                         }
                         .onDelete(perform: deleteDocuments)
@@ -56,6 +66,8 @@ struct DocumentsView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
+                        sharedDocumentPath = nil
+                        sharedDocumentName = nil
                         showingAddDocument = true
                     } label: {
                         Image(systemName: "plus")
@@ -65,18 +77,22 @@ struct DocumentsView: View {
             .sheet(isPresented: $showingAddDocument){
                 AddDocumentView(
                     viewModel: viewModel,
-                    requirementRepository: requirementRepository
+                    requirementRepository: requirementRepository,
+                    sharedDocumentPath: sharedDocumentPath,
+                    sharedDocumentName: sharedDocumentName
                 )
             }
             .onAppear {
                 viewModel.loadDocuments()
+                loadRequirements()
+                loadSharedDocument()
             }
             .alert(
                 "Something went wrong",
                 isPresented: Binding(
                     get: { viewModel.errorMessage != nil },
-                    set: { newValue in
-                        if !newValue {
+                    set: { isPresented in
+                        if !isPresented {
                             viewModel.errorMessage = nil
                         }
                     }
@@ -89,6 +105,35 @@ struct DocumentsView: View {
                 Text(viewModel.errorMessage ?? "")
             }
         }
+    }
+    
+    private func loadSharedDocument() {
+        let sharedDefaults = UserDefaults(suiteName: "group.com.Assignment3.HealthPath")
+        guard let filePath = sharedDefaults?.string(
+            forKey: "sharedDocumentPath"
+        ) else {
+            return
+        }
+        sharedDocumentPath = filePath
+        sharedDocumentName = sharedDefaults?.string(
+            forKey: "sharedDocumentName"
+        )
+        showingAddDocument = true
+    }
+    
+    private func loadRequirements() {
+        do {
+            requirements = try requirementRepository.fetchAll()
+        } catch {
+            viewModel.errorMessage = error.localizedDescription
+        }
+    }
+    
+    private func requirementName(for document: Document) -> String {
+        let requirement = requirements.first {
+            $0.id == document.healthRequirementID
+        }
+        return requirement?.title ?? "Unknown Requirement"
     }
     
     private func deleteDocuments(at offsets: IndexSet) {
