@@ -17,6 +17,8 @@ final class HealthRequirementViewModel: ObservableObject {
     @Published var selectedFilter: RequirementFilter = .all
     /// A message for the applicant when something goes wrong, or nil when all is well.
     @Published var errorMessage: String?
+    /// The ID of the requirement most recently added, so it can appear first in the list
+    @Published private(set) var recentlyAddedRequirementID: UUID?
     
     private let repository: HealthRequirementRepository
     private let addUseCase: AddHealthRequirementUseCase
@@ -38,6 +40,7 @@ final class HealthRequirementViewModel: ObservableObject {
     }
     
     /// The requirements that match the filter the applicant has chosen.
+    /// Before returning the result, move recently added requirement to the top.
     var filteredRequirements: [HealthRequirement] {
         var result: [HealthRequirement] = []
         for requirement in requirements {
@@ -53,6 +56,11 @@ final class HealthRequirementViewModel: ObservableObject {
                     result.append(requirement)
                 }
             }
+        }
+        if let recentlyAddedRequirementID,
+           let index = result.firstIndex(where: {$0.id == recentlyAddedRequirementID}) {
+            let recentlyAdded = result.remove(at:index)
+            result.insert(recentlyAdded, at:0)
         }
         return result
     }
@@ -73,6 +81,7 @@ final class HealthRequirementViewModel: ObservableObject {
     }
     
     /// Adds a requirement to the applicant's health case.
+    /// Remembers the new requirement so it appears first in the list 
     /// Returns true if it was saved, so the Add screen knows it can close.
     @discardableResult
     func add(title: String, descriptionText: String, dueDate: Date) -> Bool {
@@ -89,6 +98,7 @@ final class HealthRequirementViewModel: ObservableObject {
         
         do {
             try addUseCase.execute(requirement)
+            recentlyAddedRequirementID = requirement.id
             loadRequirements()
             return true
         } catch {
