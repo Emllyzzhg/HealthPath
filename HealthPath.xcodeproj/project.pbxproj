@@ -11,6 +11,7 @@
 		9F2020A030712838004DA399 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20209F30712838004DA399 /* SwiftUI.framework */; };
 		9F2020AB3071283A004DA399 /* HealthPathWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 9F20209B30712838004DA399 /* HealthPathWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		9F2021D23071662D004DA399 /* HealthPathShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 9F2021C83071662C004DA399 /* HealthPathShareExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		9F2025E83073E776004DA399 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 9F2025E73073E75F004DA399 /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +59,7 @@
 		9F20209F30712838004DA399 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		9F2021BF3071435C004DA399 /* HealthPathWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HealthPathWidgetExtension.entitlements; sourceTree = "<group>"; };
 		9F2021C83071662C004DA399 /* HealthPathShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HealthPathShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F2025E73073E75F004DA399 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -135,6 +137,7 @@
 		9F201BCA30678903004DA399 = {
 			isa = PBXGroup;
 			children = (
+				9F2025E73073E75F004DA399 /* README.md */,
 				9F2021BF3071435C004DA399 /* HealthPathWidgetExtension.entitlements */,
 				9F201BD530678903004DA399 /* HealthPath */,
 				9F201BE830678905004DA399 /* HealthPathTests */,
@@ -299,6 +302,7 @@
 		9F201BD130678903004DA399 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
+				9F2025E83073E776004DA399 /* README.md in Resources */,
 			);
 		};
 		9F201BE330678905004DA399 /* Resources */ = {
