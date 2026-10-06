@@ -45,7 +45,7 @@ struct RequirementDetailView: View {
             } header: {
                 Text("Due Date")
             } footer: {
-                Text("The due date noted on your Health Undertaking (Form 815) or on your clinic's letter.")
+                Text("The date this requirement needs to be completed by, based on the follow-up instructions you received from the Chest Clinic.")
             }
 
             Section("Status") {

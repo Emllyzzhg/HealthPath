@@ -27,7 +27,7 @@ struct AddRequirementView: View {
     @State private var selectedTitle = "Chest X-ray"
     @State private var otherTitle = ""
     @State private var descriptionText = ""
-    @State private var dueDate = Calendar.current.date(byAdding: .day, value: 7, to: Date()) ?? Date()
+    @State private var dueDate = Date()
 
     /// The title to save: the chosen requirement, or what the applicant typed for "Other".
     private var title: String {
@@ -68,7 +68,7 @@ struct AddRequirementView: View {
             } header: {
                 Text("Due Date")
             } footer: {
-                Text("The due date noted on your Health Undertaking (Form 815) or on your clinic's letter.")
+                Text("The date this requirement needs to be completed by, based on the follow-up instructions you received from the Chest Clinic.")
             }
             
             if let errorMessage = viewModel.errorMessage {
