@@ -17,7 +17,7 @@ HealthPath was developed as a university assessment project and does not claim r
  
 ## Domain Context    
  
-HealthPath focuses on patients completing migration-related health follow-up, particularly where multiple health requirements, appointments and documents may need to be managed over time.    
+HealthPath focuses on patients completing migration-related tuberculosis (TB) health follow up through a chest clinic, particularly where multiple health requirements, appointments and documents may need to be managed over time.    
  
 The application acts as a personal organisational tool. It does not diagnose medical conditions, determine visa eligibility or status, or replace official services such as the Department of Home Affairs, eMedical, Bupa Medical Visa Services or healthcare providers.    
  
@@ -50,25 +50,25 @@ Repository protocols separate the application's business logic from SwiftData pe
  
 ### WidgetKit Extension    
  
-The WidgetKit extension provides a quick view of the next upcoming appointment or health requirement that currently needs the user's attention without requiring navigation through the main application. It prioritises the next future appointment and falls back to the next health requirement when there is no upcoming appointment.    
+The WidgetKit extension provides a quick view of the next upcoming appointment or health requirement that currently needs the user's attention without requiring navigation through the main application. It prioritises the next future appointment and when there is no upcoming appointment, displays the next health requirement and its due date.   
  
 ### Share Extension    
  
 The Share Extension allows a PDF opened in another application to be shared into HealthPath using the iOS share sheet. The PDF is copied into the shared App Group container so it can be accessed by the main application and added to the patient’s documents.    
  
-### VisionKit  Document scanning  
+### VisionKit  Document Scanning  
  
 VisionKit complements document sharing by allowing a physical health document to be scanned directly into HealthPath and then saved to the appropriate health requirement.  
  
 ## Database Choice    
  
-HealthPath uses SwiftData for local persistent storage. This allows health requirements, appointments and document records to remain available between application launches and accessible offline without introducing cloud storage or synchronisation.    
+HealthPath uses SwiftData for local persistent storage. This allows health requirements, appointments and document records to remain available between application launches and accessible offline. The information is intended for the individual patient, and HealthPath does not currently require cloud storage or synchronisation between different users. 
  
 The SwiftData schema contains:    
  - `HealthCaseModel`    
- - `HealthRequirementModel`    
- - `AppointmentModel`    
- - `DocumentModel` 
+- `HealthRequirementModel`    
+- `AppointmentModel`    
+- `DocumentModel` 
 
 A `HealthCaseModel` contains related health requirements, while a `HealthRequirementModel` can have related appointments and documents.    
  
